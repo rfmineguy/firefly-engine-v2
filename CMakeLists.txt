@@ -97,7 +97,9 @@ endif()
 add_executable(ff_engine
   src/main.cpp
   src/Window.cpp
-  src/ImGuiLayer.cpp)
+  src/ImGuiLayer.cpp
+  src/ImGuiViewportPane.cpp
+  src/ImGuiLogPane.cpp)
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui)
 target_include_directories(ff_engine PRIVATE ${spdlog_SOURCE_DIR}/include/spdlog ${glfw_SOURCE_DIR}/include/ ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/ ${imgui_SOURCE_DIR}/)

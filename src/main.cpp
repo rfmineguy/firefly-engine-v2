@@ -11,8 +11,15 @@ int main() {
   while (!window.ShouldClose()) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    
+    
+    
+    // ImGui Rendering
     FF::ImGuiLayer::BeginFrame();
-    ImGui::ShowDemoWindow();
+    FF::ImGuiLayer::BeginDockspace(window);
+    FF::ImGuiLayer::ShowMainMenuBar(window);
+    FF::ImGuiLayer::ShowRegisteredPanes(window);
+    FF::ImGuiLayer::EndDockspace();
     FF::ImGuiLayer::EndFrame();
   }
 }

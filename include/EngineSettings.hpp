@@ -9,6 +9,8 @@ public:
     static EngineSettings instance;
     return instance;
   }
+
+public:
 };
 }
 #endif
