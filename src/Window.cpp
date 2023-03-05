@@ -1,11 +1,14 @@
 #include "../include/Window.hpp"
 #include <iostream>
+#include <imgui-src/imgui.h>
+#include <imgui-src/backends/imgui_impl_glfw.h>
+#include <imgui-src/backends/imgui_impl_opengl3.h>
 
 namespace FF {
 Window::Window(): Window("Window", 600, 600) {}
 
 Window::Window(const std::string& title, int width, int height) {
-  CreateWindow(title, width, height);
+  InitWindow(title, width, height);
 }
 
 Window::~Window() {
@@ -13,7 +16,7 @@ Window::~Window() {
   glfwTerminate();
 }
 
-void Window::CreateWindow(const std::string& title, int width, int height) {
+void Window::InitWindow(const std::string& title, int width, int height) {
   if (!glfwInit()) {
     std::cerr << "FFError: Failed to initialize glfw" << std::endl;
     glfwTerminate();

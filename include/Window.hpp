@@ -16,9 +16,10 @@ public:
 public:
   bool ShouldClose();
   void CloseWindow();
+  friend GLFWwindow* GetWindowPtr(Window*);    //Used in ImGuiLayer.cpp
 
 private:
-  void CreateWindow(const std::string&, int, int);
+  void InitWindow(const std::string&, int, int);
   static void error_callback(int, const char*);
   static void framebuffer_size_callback(GLFWwindow*, int, int);
 
