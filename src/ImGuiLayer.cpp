@@ -1,6 +1,7 @@
 #include "../include/ImGuiLayer.hpp"
 #include "../include/ImGuiViewportPane.hpp"
 #include "../include/ImGuiLogPane.hpp"
+#include "../include/ImGuiHeirarchyPane.hpp"
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
 #include <iostream>
@@ -31,6 +32,7 @@ namespace FF {
   void ImGuiLayer::RegisterPanes() {
     panes.emplace("viewport", new ImGuiViewportPane());
     panes.emplace("log", new ImGuiLogPane());
+    panes.emplace("heirarchy", new ImGuiHeirarchyPane());
   }
 
   void ImGuiLayer::BeginFrame() {
@@ -83,7 +85,6 @@ namespace FF {
       ImGui::PopStyleVar(2);
     }
     ImGuiIO& io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   //Moved into NewFrame
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
       ImGuiID dockspace_id = ImGui::GetID("DockspaceID");
       ImGui::DockSpace(dockspace_id, ImVec2(0.f, 0.f), dockspace_flags);

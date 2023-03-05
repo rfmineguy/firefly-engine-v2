@@ -94,12 +94,31 @@ if(NOT imgui_POPULATED)
   add_subdirectory(${imgui_SOURCE_DIR} ${imgui_BINARY_DIR})
 endif()
 
+# ==============================
+# Get the Entt library
+# ==============================
+FetchContent_Declare(
+  entt
+  GIT_REPOSITORY https://github.com/skypjack/entt.git
+)
+
+FetchContent_GetProperties(entt)
+if (NOT entt_POPULATED)
+  FetchContent_Populate(entt)
+  message(${entt_SOURCE_DIR})
+  add_subdirectory(${entt_SOURCE_DIR} ${entt_BINARY_DIR})
+endif()
+
 add_executable(ff_engine
   src/main.cpp
   src/Window.cpp
   src/ImGuiLayer.cpp
   src/ImGuiViewportPane.cpp
-  src/ImGuiLogPane.cpp)
+  src/ImGuiLogPane.cpp
+  src/ImGuiHeirarchyPane.cpp
+  src/Entity.cpp
+  src/Scene.cpp
+)
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui)
-target_include_directories(ff_engine PRIVATE ${spdlog_SOURCE_DIR}/include/spdlog ${glfw_SOURCE_DIR}/include/ ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/ ${imgui_SOURCE_DIR}/)
+target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT)
+target_include_directories(ff_engine PRIVATE ${spdlog_SOURCE_DIR}/include/spdlog ${glfw_SOURCE_DIR}/include/ ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/ ${imgui_SOURCE_DIR}/ ${entt_SOURCE_DIR}/single_include/)
