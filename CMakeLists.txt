@@ -3,6 +3,9 @@ project(ff_engine)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CXX_STANDARD 20)
+set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+
 include(FetchContent)
 
 # ==============================
@@ -92,7 +95,8 @@ if(NOT imgui_POPULATED)
 endif()
 
 add_executable(ff_engine
-  src/main.cpp)
+  src/main.cpp
+  src/Window.cpp)
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui)
 target_include_directories(ff_engine PRIVATE ${spdlog_SOURCE_DIR}/include/spdlog ${glfw_SOURCE_DIR}/include/ ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/ ${imgui_SOURCE_DIR}/)

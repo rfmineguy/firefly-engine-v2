@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include "../include/Window.hpp"
 
 void error_callback(int error, const char* description) {
   std::cerr << "GLFWError: " << description << std::endl;
@@ -13,6 +14,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 int main() {
+  FF::Window window;
+  
+  while (!window.ShouldClose()) {
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
+  
+  /*
   if (!glfwInit()) {
     glfwTerminate();
   }
@@ -42,7 +51,7 @@ int main() {
     
     glfwPollEvents();
     glfwSwapBuffers(window);
-  }  
+  }
   glfwDestroyWindow(window);
-  glfwTerminate();
+  */
 }
