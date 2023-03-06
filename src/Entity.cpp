@@ -1,7 +1,9 @@
 #include "../include/Entity.hpp"
+#include <iostream>
 
 namespace FF {
 
+int Entity::entity_count = 0;
 Entity Entity::InvalidEntity() {
   Entity e;
   e.name = "Invalid";
@@ -16,7 +18,9 @@ Entity::Entity(entt::entity entt_handle)
 
 Entity::Entity(): is_valid(false) {}
 
-Entity::~Entity() {}
+Entity::~Entity() {
+  entity_count --;
+}
 
 bool Entity::operator==(const Entity& e) const {
   return handle == e.handle;
@@ -26,22 +30,15 @@ bool Entity::operator!=(const Entity& e) const {
   return !(operator==(e));
 }
 
-template <typename T>
-T& Entity::GetComponent() {
-  return T();
-}
-
-template <typename T>
-void Entity::AddComponent() {
-  
-}
-
-template <typename T>
-bool Entity::HasComponent() {
-  return false;
-}
-
 const std::string& Entity::GetName() const {
   return name;
 }
+
+/*
+  GetComponent<T>
+  AddComponent<T>
+  and HashComponent<T>
+
+  defined in the header file
+*/
 }
