@@ -3,14 +3,20 @@
 #include "ImGuiPane.hpp"
 #include "Scene.hpp"
 
+namespace FF {
 class ImGuiHeirarchyPane : public ImGuiPane {
 public:
-  ImGuiHeirarchyPane();
+  ImGuiHeirarchyPane(FF::Scene&);
   ~ImGuiHeirarchyPane();
   virtual void Show(FF::Window&);
+
+private:
+  void ShowHeirarchy(FF::Scene::Node*);
+  bool ShowNode(FF::Scene::Node*);
   
 public:
-  void ShowSceneNode(FF::Scene::Node*);
+  FF::Scene& scene;
 };
+}
 
 #endif

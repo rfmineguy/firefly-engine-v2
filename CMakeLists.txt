@@ -111,12 +111,12 @@ endif()
 
 add_executable(ff_engine
   src/main.cpp
+  src/Entity.cpp
   src/Window.cpp
   src/ImGuiLayer.cpp
   src/ImGuiViewportPane.cpp
   src/ImGuiLogPane.cpp
   src/ImGuiHeirarchyPane.cpp
-  src/Entity.cpp
   src/Scene.cpp
 )
 
