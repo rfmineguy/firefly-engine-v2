@@ -48,7 +48,8 @@ Entity Scene::NewEntity(const std::string& name, const std::string& parent) {
   Entity e(name, registry.create());
   SetRegistry(&registry, &e);
   e.AddComponent<Identifier>(name);
-  InsertEntity(entity_tree, e, p->entity);
+  p->AddChild(new Node(e));
+  // InsertEntity(entity_tree, e, p->entity);
   return e;
 }
 
