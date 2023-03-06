@@ -5,13 +5,16 @@ namespace FF {
 
 Scene::Scene() {
   entity_tree = new Node(&registry); //this is the root
+  SetRegistry(&registry, &entity_tree->entity);
   entity_tree->entity.AddComponent<Identifier>("root");
+  std::cout << "Created scene tree" << std::endl;
 }
 
 Scene::~Scene() {
   Clean(entity_tree);
   delete entity_tree;
   entity_tree = nullptr;
+  std::cout << "Deleted scene tree" << std::endl;
 }
 
 void Scene::Clean(Node* root) {
@@ -25,22 +28,36 @@ void Scene::Clean(Node* root) {
   }
 }
 
+void SetRegistry(entt::registry* reg, Entity* entity) {
+  entity->registry_ptr = reg;
+}
+
 Entity Scene::NewEntity(const std::string& name) {
-  Entity e(registry.create());
+  Entity e(name, registry.create());
+  SetRegistry(&registry, &e);
+  e.AddComponent<Identifier>(name);
   InsertEntity(entity_tree, e);
   return e;
 }
 
 Entity Scene::NewEntity(const std::string& name, const std::string& parent) {
-  
+  Node* p = FindEntityNodeRec(entity_tree, parent);
+  if (p == nullptr) {
+    throw std::string("Parent not found");
+  }
+  Entity e(name, registry.create());
+  SetRegistry(&registry, &e);
+  e.AddComponent<Identifier>(name);
+  InsertEntity(entity_tree, e, p->entity);
+  return e;
 }
 
 void Scene::DeleteEntity(Entity e) {
 
 }
 
-Entity Scene::FindEntity(const std::string& name) {
-  return FindEntityRec(entity_tree, name);
+Entity Scene::FindEntity(const std::string& id) {
+  return FindEntityRec(entity_tree, id);
 }
 
 void Scene::Traverse() {
@@ -52,37 +69,42 @@ void Scene::TraverseRec(Node* root, int level) {
   if (root == nullptr)
     return;
   for (int i = 0; i < level; i++) {
-    std::cout << '\t';
+    std::cout << "  ";
   }
-  std::cout << root->entity.GetName() << std::endl;
+  std::cout << "\\_";
+  std::cout << root->entity.GetComponent<Identifier>().id << std::endl;
   for (int i = 0; i < root->children.size(); i++) {
     TraverseRec(root->children[i], level+1);
   }
 }
 
-Entity Scene::FindEntityRec(Node* root, const std::string& name) {
-  if (root == nullptr) {
-    throw std::string("Failed to find entity");
-  }
-  if (root->entity.GetName() == name) {
-    return root->entity;
-  }
+Scene::Node* Scene::FindEntityNodeRec(Scene::Node* root, const std::string& id) {
+  if (root == nullptr)
+    return nullptr;
+  if (root->entity.GetComponent<Identifier>().id == id)
+    return root;
   for (int i = 0; i < root->children.size(); i++) {
-    return FindEntityRec(root->children[i], name);
+    return FindEntityNodeRec(root->children.at(i), id);
   }
-  return Entity::InvalidEntity();
 }
 
-void Scene::InsertEntity(Node* root, Entity e) {
+Entity Scene::FindEntityRec(Node* root, const std::string& id) {
+  Node* found = FindEntityNodeRec(root, id);
+  return found->entity;
+  std::cout << found << std::endl;
+}
+
+void Scene::InsertEntity(Node* root, Entity& e) {
   InsertEntity(root, e, root->entity);
 }
 
-void Scene::InsertEntity(Node* root, Entity e, Entity parent) {
+void Scene::InsertEntity(Node* root, Entity& e, Entity parent) {
   if (root == nullptr)
     return;
   if (root->entity == parent) {
     std::cout << "Found the parent" << std::endl;
     root->children.push_back(new Node(e));
+    SetRegistry(&registry, &e);
     return;
   }
   for (int i = 0; i < root->children.size(); i++) {
