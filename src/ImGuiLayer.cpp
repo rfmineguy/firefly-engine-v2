@@ -7,7 +7,6 @@
 #include <iostream>
 
 namespace FF {
-  std::unordered_map<std::string, ImGuiPane*> ImGuiLayer::panes; 
   void ImGuiLayer::ImGuiInitialize(FF::Window& window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -18,7 +17,7 @@ namespace FF {
   }
 
   void ImGuiLayer::ImGuiDeinitialize() {
-    for (auto& i : panes) {
+    for (auto& i : Get().panes) {
       if (i.second == nullptr)
         continue;
       delete i.second;
@@ -30,9 +29,9 @@ namespace FF {
   }
 
   void ImGuiLayer::RegisterPanes() {
-    panes.emplace("viewport", new ImGuiViewportPane());
-    panes.emplace("log", new ImGuiLogPane());
-    panes.emplace("heirarchy", new ImGuiHeirarchyPane());
+    Get().panes.emplace("viewport", new ImGuiViewportPane());
+    Get().panes.emplace("log", new ImGuiLogPane());
+    Get().panes.emplace("heirarchy", new ImGuiHeirarchyPane(Get().scene));
   }
 
   void ImGuiLayer::BeginFrame() {
@@ -112,7 +111,7 @@ namespace FF {
           ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Visibility")) {
-          for (auto& i : panes) {
+          for (auto& i : Get().panes) {
             ImGui::Checkbox(i.second->Name().c_str(), &i.second->Visible());
           }
           ImGui::EndMenu();
@@ -124,7 +123,7 @@ namespace FF {
   }
 
   void ImGuiLayer::ShowRegisteredPanes(FF::Window& window) {
-    for (auto& i : panes) {
+    for (auto& i : Get().panes) {
       i.second->Show(window);
     }
   }

@@ -1,12 +1,23 @@
 #ifndef IMGUI_LAYER_HPP
 #define IMGUI_LAYER_HPP
 #include "Window.hpp"
+#include "Scene.hpp"
 #include "ImGuiPane.hpp"
 #include <imgui-src/imgui.h>
 #include <unordered_map>
 
 namespace FF {
 class ImGuiLayer {
+private:
+  ImGuiLayer() {}
+  ~ImGuiLayer() {}
+
+public:
+  static ImGuiLayer& Get() {
+    static ImGuiLayer layer;
+    return layer;
+  }
+
 public:
   static void ImGuiInitialize(FF::Window&);
   static void ImGuiDeinitialize();
@@ -22,8 +33,10 @@ public:
   
 protected:
   static void RegisterPanes();
+
 public:
-  static std::unordered_map<std::string, ImGuiPane*> panes;
+  std::unordered_map<std::string, ImGuiPane*> panes;
+  FF::Scene scene;
 };
 }
 
