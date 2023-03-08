@@ -12,14 +12,20 @@ public:
     Entity entity;
     Node* parent;
     std::vector<Node*> children;
+    std::shared_ptr<entt::registry> reg_ptr;
 
-    Node(entt::registry* reg)
-      : entity(reg->create()) {}
+    Node(std::shared_ptr<entt::registry> reg)
+      : reg_ptr(reg), entity(reg) {
+    }
     Node(Entity e)
       : entity(e) {}
     
     void AddChild(Node* n) {
       children.push_back(n);
+    }
+    
+    friend void SetRegistry(std::shared_ptr<entt::registry> reg, Entity* e) {
+      e->registry_ptr = reg;
     }
   };
 
@@ -44,7 +50,7 @@ private:
 
 private:
   Node* entity_tree;
-  entt::registry registry;
+  std::shared_ptr<entt::registry> registry;  // for the reference counting
   
 public:
   friend class ImGuiHeirarchyPane;  //allow heirarchy pane to have access to the private members

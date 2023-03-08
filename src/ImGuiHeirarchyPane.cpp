@@ -11,16 +11,15 @@ ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene& scene):
   scene.NewEntity("Entity3");
   scene.NewEntity("Entity4");
   scene.NewEntity("Entity5");
-  try {
-    scene.NewEntity("Entity6", "Entity5");
-  } catch (std::string& e) {
-    std::cerr << e << std::endl;
-  }
+  // scene.NewEntity("Entity6", "Entity5");
+  scene.Traverse();
 }
 
 ImGuiHeirarchyPane::~ImGuiHeirarchyPane() {}
 
 void ImGuiHeirarchyPane::Show(FF::Window& window) {
+  if (!visible)
+    return;
   ImGui::Begin(name.c_str());
   ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
   
@@ -31,18 +30,25 @@ void ImGuiHeirarchyPane::Show(FF::Window& window) {
 
 void ImGuiHeirarchyPane::ShowHeirarchy(FF::Scene::Node* root) {
   // traverse tree and render it
-  if (root != nullptr && ShowNode(root)) {
+  if (root == nullptr)
+    return;
+  if (ShowNode(root)) {
     for (int i = 0; i < root->children.size(); i++) {
-      if (root->children.at(i) != nullptr)
-        ShowHeirarchy(root->children.at(i));
+      ShowHeirarchy(root->children.at(i));
     }
     ImGui::TreePop();
   }
 }
 
 bool ImGuiHeirarchyPane::ShowNode(FF::Scene::Node* node) {
+  std::string node_id = node->entity.GetComponent<Identifier>().id;
   ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+  flags |= selection_id == node_id ? ImGuiTreeNodeFlags_Selected : 0; 
+
   bool opened = ImGui::TreeNodeEx(node->entity.GetComponent<Identifier>().id.c_str(), flags);
+  if (ImGui::IsItemClicked(0) && node_id != "root") {
+    selection_id = node_id;
+  }
   // do other things
   return opened;
 }

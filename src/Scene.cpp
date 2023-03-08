@@ -1,11 +1,13 @@
 #include "../include/Scene.hpp"
 #include <iostream>
+#include <memory>
 
 namespace FF {
 
 Scene::Scene() {
-  entity_tree = new Node(&registry); //this is the root
-  SetRegistry(&registry, &entity_tree->entity);
+  registry = std::make_shared<entt::registry>();
+  entity_tree = new Node(registry); //this is the root
+  // SetRegistry(&registry, &entity_tree->entity);
   entity_tree->entity.AddComponent<Identifier>("root");
   std::cout << "Created scene tree" << std::endl;
 }
@@ -28,13 +30,13 @@ void Scene::Clean(Node* root) {
   }
 }
 
-void SetRegistry(entt::registry* reg, Entity* entity) {
-  entity->registry_ptr = reg;
-}
+// void SetRegistry(entt::registry* reg, Entity* entity) {
+//   entity->registry_ptr = reg;
+// }
 
 Entity Scene::NewEntity(const std::string& name) {
-  Entity e(name, registry.create());
-  SetRegistry(&registry, &e);
+  Entity e(name, registry);
+  // SetRegistry(&registry, &e);
   e.AddComponent<Identifier>(name);
   InsertEntity(entity_tree, e);
   return e;
@@ -45,9 +47,12 @@ Entity Scene::NewEntity(const std::string& name, const std::string& parent) {
   if (p == nullptr) {
     throw std::string("Parent not found");
   }
-  Entity e(name, registry.create());
-  SetRegistry(&registry, &e);
+  std::cout << "Parent Found : " << p << std::endl;
+  Entity e(name, registry);
+  // SetRegistry(&registry, &e);
   e.AddComponent<Identifier>(name);
+  Node* n = new Node(e);
+  std::cout << n << std::endl;
   p->AddChild(new Node(e));
   // InsertEntity(entity_tree, e, p->entity);
   return e;
@@ -91,8 +96,9 @@ Scene::Node* Scene::FindEntityNodeRec(Scene::Node* root, const std::string& id) 
 
 Entity Scene::FindEntityRec(Node* root, const std::string& id) {
   Node* found = FindEntityNodeRec(root, id);
+  if (found == nullptr)
+    throw std::string("No entity found");
   return found->entity;
-  std::cout << found << std::endl;
 }
 
 void Scene::InsertEntity(Node* root, Entity& e) {
@@ -105,7 +111,7 @@ void Scene::InsertEntity(Node* root, Entity& e, Entity parent) {
   if (root->entity == parent) {
     std::cout << "Found the parent" << std::endl;
     root->children.push_back(new Node(e));
-    SetRegistry(&registry, &e);
+    // SetRegistry(&registry, &e);
     return;
   }
   for (int i = 0; i < root->children.size(); i++) {

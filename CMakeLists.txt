@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(ff_engine)
 
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -117,6 +118,7 @@ add_executable(ff_engine
   src/ImGuiViewportPane.cpp
   src/ImGuiLogPane.cpp
   src/ImGuiHeirarchyPane.cpp
+  src/ImGuiDemoWindowPane.cpp
   src/Scene.cpp
 )
 

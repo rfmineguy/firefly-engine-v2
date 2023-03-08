@@ -10,11 +10,11 @@ Entity Entity::InvalidEntity() {
   return e;
 }
 
-Entity::Entity(const std::string& name, entt::entity entt_handle)
-:name(name), handle(entt_handle) {}
+Entity::Entity(std::shared_ptr<entt::registry> reg)
+:Entity("unnamed", reg) {}
 
-Entity::Entity(entt::entity entt_handle)
-:name("unnamed"), handle(entt_handle) {}
+Entity::Entity(const std::string& name, std::shared_ptr<entt::registry> reg)
+:name(name), handle(reg->create()), registry_ptr(reg) {}
 
 Entity::Entity(): is_valid(false) {}
 

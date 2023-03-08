@@ -2,6 +2,7 @@
 #include "../include/ImGuiViewportPane.hpp"
 #include "../include/ImGuiLogPane.hpp"
 #include "../include/ImGuiHeirarchyPane.hpp"
+#include "../include/ImGuiDemoWindowPane.hpp"
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
 #include <iostream>
@@ -29,6 +30,7 @@ namespace FF {
   }
 
   void ImGuiLayer::RegisterPanes() {
+    Get().panes.emplace("demo", new ImGuiDemoWindowPane());
     Get().panes.emplace("viewport", new ImGuiViewportPane());
     Get().panes.emplace("log", new ImGuiLogPane());
     Get().panes.emplace("heirarchy", new ImGuiHeirarchyPane(Get().scene));
@@ -90,6 +92,7 @@ namespace FF {
     }
     else {
       // Docking is disabled
+      // NOTE: Not sure how to recover or what to do here
     }
   }
 
