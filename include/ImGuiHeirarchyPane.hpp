@@ -11,8 +11,8 @@ public:
   virtual void Show(FF::Window&);
 
 private:
-  void ShowHeirarchy(FF::Scene::Node*);
-  bool ShowNode(FF::Scene::Node*);
+  void ShowHeirarchy(FF::Entity*);
+  bool ShowEntityNode(FF::Entity*);
   
 public:
   FF::Scene& scene;

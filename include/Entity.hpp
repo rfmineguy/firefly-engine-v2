@@ -3,6 +3,7 @@
 #include <entt-src/single_include/entt/entt.hpp>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 namespace FF {
 class Entity {
@@ -39,18 +40,21 @@ public:
   
   const std::string& GetName() const;
   
-  friend void SetRegistry(std::shared_ptr<entt::registry>, Entity*);
-
+  Entity* AddChild(Entity*);
+  
 public:
   static int entity_count;
 
 private:
   entt::entity handle;
   std::string name;
-  bool is_valid;
+  Entity* parent;
+  std::vector<Entity*> children;
   
 private:
   std::weak_ptr<entt::registry> registry_ptr;
+friend class Scene;
+friend class ImGuiHeirarchyPane;
 };
 }
 
