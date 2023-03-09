@@ -6,6 +6,7 @@
 #include "../include/Logger.hpp"
 #include "../include/EngineSettings.hpp"
 #include "../include/ImGuiLayer.hpp"
+#include "../include/Framebuffer.hpp"
 
 void scene_test() {
   std::cout << "-==================================-" << std::endl;
@@ -23,11 +24,22 @@ void scene_test() {
   scene.Traverse();
 }
 
+void framebuffer_test() {
+  std::cout << "-==================================-" << std::endl;
+  std::cout << "      Testing the framebuffer" << std::endl;
+  std::cout << "-==================================-" << std::endl;
+  FF::Window w;
+  FF::Framebuffer fb(600, 600);
+}
+
 // #define SCENE_TEST
+// #define FRAMEBUFFER_TEST
 
 int main() {
 #ifdef SCENE_TEST
   scene_test();
+#elifdef FRAMEBUFFER_TEST
+  framebuffer_test();
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);

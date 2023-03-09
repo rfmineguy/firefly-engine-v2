@@ -9,9 +9,12 @@ Window::Window(): Window("Window", 600, 600) {}
 
 Window::Window(const std::string& title, int width, int height) {
   InitWindow(title, width, height);
+  fb = new FF::Framebuffer(width, height);
 }
 
 Window::~Window() {
+  delete fb;
+  fb = nullptr;
   glfwDestroyWindow(window_ptr);
   glfwTerminate();
 }
@@ -47,6 +50,10 @@ bool Window::ShouldClose() {
 
 void Window::CloseWindow() {
   glfwSetWindowShouldClose(window_ptr, GLFW_TRUE);
+}
+
+FF::Framebuffer& Window::GetFramebuffer() {
+  return *fb;
 }
 
 void Window::error_callback(int error, const char* description) {

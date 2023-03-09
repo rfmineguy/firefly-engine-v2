@@ -114,6 +114,7 @@ add_executable(ff_engine
   src/main.cpp
   src/Entity.cpp
   src/Window.cpp
+  src/Framebuffer.cpp
   src/ImGuiLayer.cpp
   src/ImGuiViewportPane.cpp
   src/ImGuiLogPane.cpp
