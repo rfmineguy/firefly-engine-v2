@@ -22,7 +22,7 @@ void scene_test() {
   scene.Traverse();
 }
 
-#define SCENE_TEST
+// #define SCENE_TEST
 
 int main() {
 #ifdef SCENE_TEST

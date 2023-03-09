@@ -1,7 +1,6 @@
 #include "../include/ImGuiHeirarchyPane.hpp"
 #include "../include/Scene.hpp"
 
-// TODO: Make the scene reference a smart pointer maybe
 namespace FF {
 ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene& scene):
   ImGuiPane("Heirarchy"), scene(scene) {
@@ -54,6 +53,22 @@ bool ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
   bool opened = ImGui::TreeNodeEx(node->GetComponent<Identifier>().id.c_str(), flags);
   if (ImGui::IsItemClicked(0) && node_id != "root") {
     selection_id = node_id;
+  }
+  if (ImGui::BeginDragDropSource()) {
+    ImGui::SetDragDropPayload("ENTITY_MOVE_PAYLOAD", &node, sizeof(FF::Entity*));
+    ImGui::EndDragDropSource();
+  }
+  if (ImGui::BeginDragDropTarget()) {
+    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_MOVE_PAYLOAD")) {
+      FF::Entity* e = *(FF::Entity**) payload->Data;
+      if (e != node) {
+        std::cout << "Move entity?" << std::endl;
+        std::cout << " From: " << e << std::endl;
+        std::cout << " To  : " << node << std::endl;
+        node->AddChild(e);
+      }
+    }
+    ImGui::EndDragDropTarget();
   }
   // do other things
   return opened;

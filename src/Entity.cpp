@@ -37,16 +37,17 @@ const std::string& Entity::GetName() const {
 }
 
 Entity* Entity::AddChild(Entity* e) {
+  // remove e from its parent
   if (e->parent) {
     auto it = std::find(e->parent->children.begin(), e->parent->children.end(), e);
     if (it != e->parent->children.end()) {
       e->parent->children.erase(it);
     }
   }
+
   e->parent = this;
   children.push_back(e);
   
-  // TODO: Remove e from its previous parent
   return e;
 }
 
