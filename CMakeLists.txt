@@ -119,6 +119,7 @@ add_executable(ff_engine
   src/ImGuiLogPane.cpp
   src/ImGuiHeirarchyPane.cpp
   src/ImGuiDemoWindowPane.cpp
+  src/ImGuiInspectorPane.cpp
   src/Scene.cpp
 )
 

@@ -4,7 +4,7 @@
 
 namespace FF {
 
-Scene::Scene() {
+Scene::Scene(): entity_count(0) {
   registry = std::make_shared<entt::registry>();
   entity_tree_root = new Entity("root", registry);
   entity_tree_root->AddComponent<Identifier>("root");
@@ -34,11 +34,13 @@ Entity* Scene::NewEntity(const std::string& name) {
   Entity *e = new Entity(name, registry);
   e->AddComponent<Identifier>(name);
   entity_tree_root->AddChild(e);
+  entity_count++;
   return e;
 }
 
 void Scene::DeleteEntity(Entity e) {
-
+  //NOTE: Never used yet
+  entity_count--;
 }
 
 Entity Scene::FindEntity(const std::string& id) {
@@ -66,6 +68,10 @@ void Scene::TraverseRec(Entity* root, int level) {
 Entity* Scene::FindEntityNode(const std::string& id) {
   std::cout << "Finding entity: " << id << std::endl;
   return FindEntityNodeRec(entity_tree_root, id);
+}
+
+int Scene::GetEntityCount() const {
+  return entity_count;
 }
 
 // Use depth or breadth first search

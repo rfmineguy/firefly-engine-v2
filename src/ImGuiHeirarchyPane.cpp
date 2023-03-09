@@ -26,10 +26,10 @@ void ImGuiHeirarchyPane::Show(FF::Window& window) {
   if (!visible)
     return;
   ImGui::Begin(name.c_str());
-  ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-  
+  if (ImGui::Button("New Entity")) {
+    scene.NewEntity("Entity" + std::to_string(scene.GetEntityCount()));
+  }
   ShowHeirarchy(scene.entity_tree_root);
-  
   ImGui::End();
 }
 
@@ -53,6 +53,7 @@ bool ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
   bool opened = ImGui::TreeNodeEx(node->GetComponent<Identifier>().id.c_str(), flags);
   if (ImGui::IsItemClicked(0) && node_id != "root") {
     selection_id = node_id;
+    scene.selected_entity = node;
   }
   if (ImGui::BeginDragDropSource()) {
     ImGui::SetDragDropPayload("ENTITY_MOVE_PAYLOAD", &node, sizeof(FF::Entity*));
@@ -62,9 +63,6 @@ bool ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_MOVE_PAYLOAD")) {
       FF::Entity* e = *(FF::Entity**) payload->Data;
       if (e != node) {
-        std::cout << "Move entity?" << std::endl;
-        std::cout << " From: " << e << std::endl;
-        std::cout << " To  : " << node << std::endl;
         node->AddChild(e);
       }
     }

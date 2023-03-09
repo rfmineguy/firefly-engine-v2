@@ -11,7 +11,6 @@ public:
   Scene();
   ~Scene();
   Entity* NewEntity(const std::string&);
-  // Entity NewEntity(const std::string&, const std::string&);
   void DeleteEntity(Entity);
 
   // TODO: What to do when the entity doesn't exist
@@ -19,6 +18,7 @@ public:
   void Traverse();
   
   Entity* FindEntityNode(const std::string&);
+  int GetEntityCount() const;
   
 private:
   void InsertEntity(Entity*, Entity&);
@@ -29,11 +29,13 @@ private:
   void Clean(Entity*);
 
 private:
-  Entity* entity_tree_root;
+  Entity *entity_tree_root, *selected_entity;
+  int entity_count;
   std::shared_ptr<entt::registry> registry;  // for the reference counting
   
 public:
   friend class ImGuiHeirarchyPane;  //allow heirarchy pane to have access to the private members
+  friend class ImGuiInspectorPane;  //allow Inspector pane to have access to the private members
 };
 }
 
