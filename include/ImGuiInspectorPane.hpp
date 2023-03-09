@@ -9,7 +9,7 @@ public:
   ImGuiInspectorPane(FF::Scene&);
   ~ImGuiInspectorPane();
   virtual void Show(FF::Window&);
-  
+
 private:
   FF::Scene& scene;
 };

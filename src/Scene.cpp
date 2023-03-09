@@ -24,7 +24,6 @@ void Scene::Clean(Entity* root) {
   }
   for (int i = 0; i < root->children.size(); i++) {
     Clean(root->children[i]);
-    std::cout << root->children[i] << std::endl;
     delete root->children[i];
     root->children[i] = nullptr;
   }
@@ -33,6 +32,7 @@ void Scene::Clean(Entity* root) {
 Entity* Scene::NewEntity(const std::string& name) {
   Entity *e = new Entity(name, registry);
   e->AddComponent<Identifier>(name);
+  e->AddComponent<Transform>();
   entity_tree_root->AddChild(e);
   entity_count++;
   return e;

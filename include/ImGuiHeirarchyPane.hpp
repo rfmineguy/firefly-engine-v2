@@ -16,6 +16,7 @@ private:
   
 public:
   FF::Scene& scene;
+  
 private:
   std::string selection_id;
 };

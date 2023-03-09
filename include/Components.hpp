@@ -17,7 +17,12 @@ struct Transform {
   glm::vec3 rotation_center;
 };
 
-struct SpriteRenderer {
-  SpriteRenderer() {}
+struct ShapeRenderer {
+  enum Shape {
+    RECTANGLE, TRIANGLE, CIRCLE, POLYGON
+  };
+  ShapeRenderer() {}
+  glm::vec4 color;
+  Shape shape;
 };
 #endif

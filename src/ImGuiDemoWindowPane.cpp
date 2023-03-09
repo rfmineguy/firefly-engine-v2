@@ -1,7 +1,9 @@
 #include "../include/ImGuiDemoWindowPane.hpp"
 
 ImGuiDemoWindowPane::ImGuiDemoWindowPane()
-:ImGuiPane("Demo Window Pane") {}
+:ImGuiPane("Demo Window Pane") {
+  visible = false;
+}
 
 ImGuiDemoWindowPane::~ImGuiDemoWindowPane() {
   

@@ -19,6 +19,7 @@ namespace FF {
   }
 
   void ImGuiLayer::ImGuiDeinitialize() {
+    // NOTE: These are not gettings deleted
     for (auto& i : Get().panes) {
       if (i.second == nullptr)
         continue;

@@ -3,6 +3,7 @@
 #include <spdlog-src/include/spdlog/spdlog.h>
 #include "../include/Window.hpp"
 #include "../include/Scene.hpp"
+#include "../include/Logger.hpp"
 #include "../include/EngineSettings.hpp"
 #include "../include/ImGuiLayer.hpp"
 
@@ -30,6 +31,7 @@ int main() {
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);
+  // FF::Logger::Initialize();
 
   while (!window.ShouldClose()) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -47,5 +49,7 @@ int main() {
     FF::ImGuiLayer::EndDockspace();
     FF::ImGuiLayer::EndFrame();
   }
+  
+  FF::ImGuiLayer::ImGuiDeinitialize(); // Important
 #endif
 }
