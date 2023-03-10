@@ -2,6 +2,7 @@
 #define SHADER_HPP
 #include <string>
 #include <glad-build/include/glad/glad.h>
+#include <glm-src/glm/glm.hpp>
 
 namespace FF {
 class Shader {
@@ -14,9 +15,15 @@ public:
   void Bind();
   void Unbind();
   
+public:
+  void SetUniformMat4(const std::string&, glm::mat4);
+  
 private:
   unsigned int CompileShader(GLenum, const std::string&);
   unsigned int LinkProgram();
+  
+private:
+  unsigned int GetUniformLocation(const std::string&);
 
 private:
   std::string vertexShaderPath;

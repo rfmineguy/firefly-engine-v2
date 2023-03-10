@@ -8,6 +8,7 @@ Scene::Scene(): entity_count(0) {
   registry = std::make_shared<entt::registry>();
   entity_tree_root = new Entity("root", registry);
   entity_tree_root->AddComponent<Identifier>("root");
+  entity_tree_root->AddComponent<Transform>();
   std::cout << "Created scene tree" << std::endl;
 }
 

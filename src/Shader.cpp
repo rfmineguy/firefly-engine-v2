@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
 
 namespace FF {
 std::string ReadFile(std::ifstream& f) {
@@ -24,9 +25,6 @@ Shader::Shader(const std::string& vert_path, const std::string& frag_path)
   std::string frag_contents = ReadFile(f2);
   f2.close();
   
-  std::cout << vert_contents << std::endl;
-  std::cout << frag_contents << std::endl;
-    
   vertexShaderHandle   = CompileShader(GL_VERTEX_SHADER, vert_contents);
   fragmentShaderHandle = CompileShader(GL_FRAGMENT_SHADER, frag_contents);
   if (vertexShaderHandle == -1 || fragmentShaderHandle == -1) {
@@ -53,6 +51,11 @@ void Shader::Bind() {
 
 void Shader::Unbind() {
   glUseProgram(0);
+}
+
+void Shader::SetUniformMat4(const std::string& uniName, glm::mat4 matrix) {
+  unsigned int loc = GetUniformLocation(uniName);
+  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 std::string Shader::ShaderTypeToString(GLenum t) {
@@ -110,5 +113,14 @@ unsigned int Shader::LinkProgram() {
   glDeleteShader(vertexShaderHandle);
   glDeleteShader(fragmentShaderHandle);
   return program_id;
+}
+
+unsigned int Shader::GetUniformLocation(const std::string& uniformName) {
+  // TODO: Cache this
+  unsigned int loc = glGetUniformLocation(shaderProgramHandle, uniformName.c_str());
+  if (loc == -1) {
+    std::cerr << "Uniform location: " << uniformName << " does not exist" << std::endl;
+  }
+  return loc;
 }
 }

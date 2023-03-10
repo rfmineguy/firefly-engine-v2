@@ -28,15 +28,43 @@ void Renderer::DrawQuad() {
   fb.lock()->Bind();
   q.Bind();
   shader.Bind();
+  shader.SetUniformMat4("transform", glm::mat4(1.0f));
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   shader.Unbind();
   q.Unbind();
   fb.lock()->Unbind();
 }
 
+void Renderer::DrawQuad(glm::mat4 transform) {
+  if (fb.expired())
+    return;
+  FF::Geometry& q = FF::Geometry::Quad();
+  fb.lock()->Bind();
+  q.Bind();
+  shader.Bind();
+  shader.SetUniformMat4("transform", transform);
+  
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  
+  shader.Unbind();
+  q.Unbind();
+  fb.lock()->Unbind();
+  
+  std::cout << "Drawing quad" << std::endl;
+}
+
 void Renderer::DrawShape(const Transform& t, const ShapeRenderer& shapeRenderer) {
   if (fb.expired())
     return;
+  FF::Geometry& q = FF::Geometry::Quad();
+  fb.lock()->Bind();
+  q.Bind();
+  shader.Bind();
+  shader.SetUniformMat4("transform", glm::mat4(1.0f));
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  shader.Unbind();
+  q.Unbind();
+  fb.lock()->Unbind();
 }
 
 void Renderer::DrawSprite(const Transform& t, const SpriteRenderer& spriteRenderer) {

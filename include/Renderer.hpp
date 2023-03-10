@@ -13,6 +13,7 @@ public:
   void ClearColor(int, int, int);
   
   void DrawQuad();
+  void DrawQuad(glm::mat4);
   void DrawShape(const Transform&, const ShapeRenderer&);
   void DrawSprite(const Transform&, const SpriteRenderer&);
   

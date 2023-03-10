@@ -22,7 +22,7 @@ public:
 
   template<typename T>
   T& GetComponent() {
-    if (!HasComponent<T>()) {
+    if (!this->HasComponent<T>()) {
       std::cerr << "Entity('" << name << "') has no component '" << typeid(T).name() << "'" << std::endl;
     }
     return registry_ptr.lock()->get<T>(handle);
@@ -35,7 +35,7 @@ public:
   
   template <typename T>
   bool HasComponent() {
-    return registry_ptr.lock()->try_get<T>(handle);//try_get<T>(handle);
+    return registry_ptr.lock()->try_get<T>(handle);
   }
   
   const std::string& GetName() const;
@@ -55,6 +55,7 @@ private:
   std::weak_ptr<entt::registry> registry_ptr;
 friend class Scene;
 friend class ImGuiHeirarchyPane;
+friend class ImGuiViewportPane;
 };
 }
 

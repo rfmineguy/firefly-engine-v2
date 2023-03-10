@@ -1,4 +1,5 @@
 #include "../include/ImGuiViewportPane.hpp"
+#include <glm-src/glm/gtx/transform.hpp>
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):
@@ -13,8 +14,8 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
   renderer.SetTargetFramebuffer(fb);
   renderer.ClearColor(100, 100, 100);
-  renderer.DrawQuad();
-  // RenderScene();
+  // renderer.DrawQuad();
+  RenderScene();
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
@@ -33,14 +34,20 @@ void ImGuiViewportPane::Show(FF::Window& window) {
 
 // ImGuiViewportPane is a friend of Scene
 void ImGuiViewportPane::RenderScene() {
-  // Use the renderer to render the scene objects
-  RenderEntityNode(scene.entity_tree_root);
+  RenderEntityNode(scene.entity_tree_root); //identity transformation
 }
 
 // Before cumulative transformation matrices just render the entities
-void ImGuiViewportPane::RenderEntityNode(Entity* node) {
+void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
   if (node == nullptr)
     return;
-  // render the entity
+
+  Transform& t = node->GetComponent<Transform>();
+  transform = glm::translate(transform, t.position);
+  renderer.DrawQuad(transform);
+  
+  for (int i = 0; i < node->children.size(); i++) {
+    RenderEntityNode(node->children.at(i), transform);
+  }
 }
 }
