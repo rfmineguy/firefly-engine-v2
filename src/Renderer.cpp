@@ -8,8 +8,7 @@
     return \
 
 namespace FF {
-Renderer::Renderer()  {}
-
+Renderer::Renderer(): shader("res/test.vert", "res/test.frag")  {}
 Renderer::~Renderer() {}
 
 void Renderer::ClearColor(int r, int g, int b) {
@@ -26,10 +25,13 @@ void Renderer::DrawQuad() {
   if (fb.expired())
     return;
   FF::Geometry& q = FF::Geometry::Quad();
+  fb.lock()->Bind();
   q.Bind();
-  // TODO: I need a shader in order to draw anything
+  shader.Bind();
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  shader.Unbind();
   q.Unbind();
+  fb.lock()->Unbind();
 }
 
 void Renderer::DrawShape(const Transform& t, const ShapeRenderer& shapeRenderer) {
@@ -45,5 +47,4 @@ void Renderer::DrawSprite(const Transform& t, const SpriteRenderer& spriteRender
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {
   fb = _fb;
 }
-
 }

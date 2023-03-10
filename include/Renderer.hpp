@@ -3,6 +3,7 @@
 #include "../include/Framebuffer.hpp"
 #include "../include/Components.hpp"
 #include "../include/Geometry.hpp"
+#include "../include/Shader.hpp"
 
 namespace FF {
 class Renderer {
@@ -20,6 +21,7 @@ public:
 private:
   // store RECTANGLE, TRIANGLE, CIRCLE, POLYGON
   FF::Geometry* geometry[ShapeRenderer::SHAPE_COUNT];
+  FF::Shader shader;
   
 private:
   std::weak_ptr<FF::Framebuffer> fb;

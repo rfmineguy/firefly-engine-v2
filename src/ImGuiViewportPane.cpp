@@ -13,7 +13,8 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
   renderer.SetTargetFramebuffer(fb);
   renderer.ClearColor(100, 100, 100);
-  RenderScene();
+  renderer.DrawQuad();
+  // RenderScene();
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
