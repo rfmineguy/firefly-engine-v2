@@ -9,6 +9,7 @@
 #include "../include/Framebuffer.hpp"
 #include "../include/Renderer.hpp"
 #include "../include/Geometry.hpp"
+#include "../include/Shader.hpp"
 
 void scene_test() {
   std::cout << "-==================================-" << std::endl;
@@ -34,6 +35,10 @@ void framebuffer_test() {
 }
 
 void geometry_test() {
+  std::cout << "-==================================-" << std::endl;
+  std::cout << "      Testing the geometry" << std::endl;
+  std::cout << "-==================================-" << std::endl;
+  FF::Window w;
   FF::Geometry& g = FF::Geometry::Quad();
   std::cout << g.vertices.size() << std::endl;
   std::cout << g.indices.size() << std::endl;
@@ -43,9 +48,15 @@ void geometry_test() {
   std::cout << g2.indices.size() << std::endl;
 }
 
+void shader_test() {
+  FF::Window w;
+  FF::Shader s("res/test.vert", "res/test.frag");
+}
+
 // #define SCENE_TEST
 // #define FRAMEBUFFER_TEST
-#define GEOMETRY_TEST
+// #define GEOMETRY_TEST
+// #define SHADER_TEST
 
 int main() {
 #ifdef SCENE_TEST
@@ -54,6 +65,8 @@ int main() {
   framebuffer_test();
 #elifdef GEOMETRY_TEST
   geometry_test();
+#elifdef SHADER_TEST
+  shader_test();
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);

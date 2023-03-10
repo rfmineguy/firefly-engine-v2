@@ -7,6 +7,8 @@ set(CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
+file (COPY res DESTINATION ${CMAKE_BINARY_DIR})
+
 include(FetchContent)
 
 # ==============================
@@ -124,6 +126,7 @@ add_executable(ff_engine
   src/ImGuiInspectorPane.cpp
   src/Scene.cpp
   src/Geometry.cpp
+  src/Shader.cpp
 )
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT)
