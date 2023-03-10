@@ -20,10 +20,10 @@ public:
     if (g.has_generated_buffers)
       return g;
 
-    g.vertices.push_back(Vertex{ .position=glm::vec3( 0.5f,  0.5f, 0.0f) });
-    g.vertices.push_back(Vertex{ .position=glm::vec3( 0.5f, -0.5f, 0.0f) });
-    g.vertices.push_back(Vertex{ .position=glm::vec3(-0.5f, -0.5f, 0.0f) });
-    g.vertices.push_back(Vertex{ .position=glm::vec3(-0.5f,  0.5f, 0.0f) });
+    g.vertices.push_back(Vertex{ .position=glm::vec3( 1.0f,  1.0f, 0.0f) });
+    g.vertices.push_back(Vertex{ .position=glm::vec3( 1.0f,  0.0f, 0.0f) });
+    g.vertices.push_back(Vertex{ .position=glm::vec3( 0.0f,  0.0f, 0.0f) });
+    g.vertices.push_back(Vertex{ .position=glm::vec3( 0.0f,  1.0f, 0.0f) });
     g.indices.assign({0, 1, 3, 1, 2, 3});
     g.GenerateGLHandles();
     

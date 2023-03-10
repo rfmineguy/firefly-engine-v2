@@ -13,7 +13,7 @@ Framebuffer::Framebuffer(int w, int h)
     All attachments should be complete as well (reserved memory).
     Each buffer should have the same number of samples.
   */  
-  Resize(w, h);
+  Resize(0, 0, w, h);
 }
 
 Framebuffer::~Framebuffer() {
@@ -23,7 +23,7 @@ Framebuffer::~Framebuffer() {
   std::cout << "Deleted framebuffer" << std::endl;
 }
 
-void Framebuffer::Resize(int newWidth, int newHeight) {
+void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
   glDeleteFramebuffers(1, &fbo);
   glDeleteTextures(1, &color_attachment_tex);
   glDeleteRenderbuffers(1, &rbo);
@@ -50,6 +50,9 @@ void Framebuffer::Resize(int newWidth, int newHeight) {
     std::cout << "Framebuffer incomplete" << std::endl;
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  width = newWidth;
+  height = newHeight;
+  glViewport(newX, newY, width, height);
 }
 
 void Framebuffer::Bind() {

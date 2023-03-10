@@ -14,7 +14,6 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
   renderer.SetTargetFramebuffer(fb);
   renderer.ClearColor(100, 100, 100);
-  // renderer.DrawQuad();
   RenderScene();
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
@@ -22,8 +21,11 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   
   // Handle viewport resizing
   ImVec2 viewport_size = ImGui::GetContentRegionAvail();
+  ImVec2 viewport_pos = ImGui::GetWindowPos();
+  
   if (last_viewport_size.x != viewport_size.x || last_viewport_size.y != viewport_size.y) {
-    fb->Resize(viewport_size.x, viewport_size.y);
+    fb->Resize(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
+    renderer.UpdateProjectionMatrix(viewport_size.x, viewport_size.y);
     last_viewport_size = viewport_size;
   }
   
@@ -44,6 +46,7 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
 
   Transform& t = node->GetComponent<Transform>();
   transform = glm::translate(transform, t.position);
+  transform = glm::scale(transform, t.scale);
   renderer.DrawQuad(transform);
   
   for (int i = 0; i < node->children.size(); i++) {

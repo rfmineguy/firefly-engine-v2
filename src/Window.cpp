@@ -59,6 +59,6 @@ void Window::error_callback(int error, const char* description) {
 }
 
 void Window::framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height) {
-  glViewport(0, 0, width, height);
+  // glViewport(0, 0, width, height);
 }
 }
