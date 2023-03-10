@@ -1,4 +1,5 @@
 #include "../include/Shader.hpp"
+#include "../include/Logger.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,7 +17,6 @@ std::string ReadFile(std::ifstream& f) {
 Shader::Shader(const std::string& vert_path, const std::string& frag_path)
 :vertexShaderPath(vert_path), fragmentShaderPath(frag_path)
 {
-  std::cout << "Reading file" << std::endl;
   std::ifstream f(vert_path);
   std::string vert_contents = ReadFile(f);
   f.close();
@@ -28,12 +28,12 @@ Shader::Shader(const std::string& vert_path, const std::string& frag_path)
   vertexShaderHandle   = CompileShader(GL_VERTEX_SHADER, vert_contents);
   fragmentShaderHandle = CompileShader(GL_FRAGMENT_SHADER, frag_contents);
   if (vertexShaderHandle == -1 || fragmentShaderHandle == -1) {
-    std::cerr << "One of the shaders failed to compile" << std::endl; 
+    Logger::Warn("One of the shaders failed to compile");
   }
   else {
     shaderProgramHandle = LinkProgram();
     if (shaderProgramHandle == -1) {
-      std::cerr << "The shader program failed to link" << std::endl; 
+      Logger::Warn("The shader program failed to link");
     }
   }
   
@@ -68,7 +68,7 @@ std::string Shader::ShaderTypeToString(GLenum t) {
 
 unsigned int Shader::CompileShader(GLenum type, const std::string& contents) {
   if (type != GL_VERTEX_SHADER && type != GL_FRAGMENT_SHADER) {
-    std::cerr << "type not supported" << std::endl;
+    Logger::Error("Type not supported");
     return -1;
   }
   
@@ -82,11 +82,11 @@ unsigned int Shader::CompileShader(GLenum type, const std::string& contents) {
   glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-    std::cerr << "Error: " << ShaderTypeToString(type) << " : Compilation failed" << std::endl;
+    Logger::Error("{} : Compilation failed", ShaderTypeToString(type));
     return -1;
   }
   else {
-    std::cout << "Info: " << ShaderTypeToString(type) << " : Compilation successful" << std::endl;
+    Logger::Info("{} : Compilation successful", ShaderTypeToString(type));
   }
   
   return shader_id;
@@ -103,11 +103,11 @@ unsigned int Shader::LinkProgram() {
   glGetShaderiv(program_id, GL_LINK_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(program_id, 512, NULL, infoLog);
-    std::cerr << "Error: Shader linking failed" << std::endl;
+    Logger::Error("Linking failed");
     return -1;
   }
   else {
-    std::cerr << "Info: Shader linking successful" << std::endl;
+    Logger::Info("Linking successful");
   }
 
   glDeleteShader(vertexShaderHandle);
@@ -119,7 +119,7 @@ unsigned int Shader::GetUniformLocation(const std::string& uniformName) {
   // TODO: Cache this
   unsigned int loc = glGetUniformLocation(shaderProgramHandle, uniformName.c_str());
   if (loc == -1) {
-    std::cerr << "Uniform location: " << uniformName << " does not exist" << std::endl;
+    Logger::Warn("Uniform location: {} does not exist", uniformName);
   }
   return loc;
 }

@@ -33,6 +33,8 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   }
   
   ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size);
+  ImGui::GetForegroundDrawList()->AddCircle(ImGui::GetMousePos(), 10, 0);
+
   ImGui::End();
   ImGui::PopStyleVar();
 }
@@ -49,6 +51,7 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
 
   Transform& t = node->GetComponent<Transform>();
   transform = glm::translate(transform, t.position);
+  transform = glm::scale(transform, t.scale);
   renderer.DrawQuad(transform);
 
   for (int i = 0; i < node->children.size(); i++) {

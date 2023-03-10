@@ -4,7 +4,6 @@
 #include "../include/Window.hpp"
 #include "../include/Scene.hpp"
 #include "../include/Logger.hpp"
-#include "../include/EngineSettings.hpp"
 #include "../include/ImGuiLayer.hpp"
 #include "../include/Framebuffer.hpp"
 #include "../include/Renderer.hpp"
@@ -53,10 +52,15 @@ void shader_test() {
   FF::Shader s("res/test.vert", "res/test.frag");
 }
 
+void logger_test() {
+  FF::Logger::Info("This is the first log");
+}
+
 // #define SCENE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST
 // #define SHADER_TEST
+// #define LOGGER_TEST
 
 int main() {
 #ifdef SCENE_TEST
@@ -67,6 +71,8 @@ int main() {
   geometry_test();
 #elifdef SHADER_TEST
   shader_test();
+#elifdef LOGGER_TEST
+  logger_test();
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);

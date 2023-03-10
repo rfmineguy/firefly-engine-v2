@@ -61,7 +61,6 @@ void Renderer::DrawQuad(glm::mat4 transform) {
   shader.Unbind();
   q.Unbind();
   fb.lock()->Unbind();
-  std::cout << "Rendered quad" << std::endl;
 }
 
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {

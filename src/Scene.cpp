@@ -1,4 +1,5 @@
 #include "../include/Scene.hpp"
+#include "../include/Logger.hpp"
 #include <iostream>
 #include <memory>
 
@@ -10,14 +11,14 @@ Scene::Scene(): entity_count(0) {
   entity_tree_root->AddComponent<Identifier>("root");
   entity_tree_root->AddComponent<Transform>();
   entity_tree_root->AddComponent<ShapeRenderer>();
-  std::cout << "Created scene tree" << std::endl;
+  Logger::Info("Created scene tree");
 }
 
 Scene::~Scene() {
   Clean(entity_tree_root);
   delete entity_tree_root;
   entity_tree_root = nullptr;
-  std::cout << "Deleted scene tree" << std::endl;
+  Logger::Info("Deleted scene tree");
 }
 
 void Scene::Clean(Entity* root) {
@@ -51,7 +52,7 @@ Entity Scene::FindEntity(const std::string& id) {
 }
 
 void Scene::Traverse() {
-  std::cout << "Traversing scene" << std::endl;
+  Logger::Debug("Traversing scene");
   TraverseRec(entity_tree_root, 0);
 }
 
@@ -69,7 +70,6 @@ void Scene::TraverseRec(Entity* root, int level) {
 }
 
 Entity* Scene::FindEntityNode(const std::string& id) {
-  std::cout << "Finding entity: " << id << std::endl;
   return FindEntityNodeRec(entity_tree_root, id);
 }
 
@@ -115,7 +115,6 @@ void Scene::InsertEntity(Entity* root, Entity& e, Entity parent) {
   if (root == nullptr)
     return;
   if (*root == parent) {
-    std::cout << "Found the parent" << std::endl;
     root->children.push_back(new Entity(e));
     return;
   }

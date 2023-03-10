@@ -128,6 +128,7 @@ add_executable(ff_engine
   src/Scene.cpp
   src/Geometry.cpp
   src/Shader.cpp
+  src/Logger.cpp
 )
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT)
