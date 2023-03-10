@@ -20,22 +20,22 @@ public:
   
   template <typename ...Args>
   static void Info(const std::string& msg, Args&&... args) {
-    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::info, msg, std::forward<Args>(args)...);
+    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::info, fmt::runtime(msg), std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Warn(const std::string& msg, Args&&... args) {
-    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::warn, msg, std::forward<Args>(args)...);
+    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::warn, fmt::runtime(msg), std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Debug(const std::string& msg, Args&&... args) {
-    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::debug, msg, std::forward<Args>(args)...);
+    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::debug, fmt::runtime(msg), std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Error(const std::string& msg, Args&&... args) {
-    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::err, msg, std::forward<Args>(args)...);
+    SPDLOG_LOGGER_CALL(Get().spdlog_logger, spdlog::level::err, fmt::runtime(msg), std::forward<Args>(args)...);
   }
 
 private:
