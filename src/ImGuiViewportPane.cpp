@@ -1,8 +1,8 @@
 #include "../include/ImGuiViewportPane.hpp"
 
+namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):
-ImGuiPane("Viewport"), scene(_scene) {
-}
+  ImGuiPane("Viewport"), scene(_scene) {}
 
 ImGuiViewportPane::~ImGuiViewportPane() {}
 
@@ -13,6 +13,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
   renderer.SetTargetFramebuffer(fb);
   renderer.ClearColor(100, 100, 100);
+  RenderScene();
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
@@ -31,5 +32,14 @@ void ImGuiViewportPane::Show(FF::Window& window) {
 
 // ImGuiViewportPane is a friend of Scene
 void ImGuiViewportPane::RenderScene() {
+  // Use the renderer to render the scene objects
+  RenderEntityNode(scene.entity_tree_root);
+}
 
+// Before cumulative transformation matrices just render the entities
+void ImGuiViewportPane::RenderEntityNode(Entity* node) {
+  if (node == nullptr)
+    return;
+  // render the entity
+}
 }

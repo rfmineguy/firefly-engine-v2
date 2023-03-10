@@ -123,6 +123,7 @@ add_executable(ff_engine
   src/ImGuiDemoWindowPane.cpp
   src/ImGuiInspectorPane.cpp
   src/Scene.cpp
+  src/Geometry.cpp
 )
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT)

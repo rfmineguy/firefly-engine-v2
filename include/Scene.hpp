@@ -36,6 +36,7 @@ private:
 public:
   friend class ImGuiHeirarchyPane;  //allow heirarchy pane to have access to the private members
   friend class ImGuiInspectorPane;  //allow Inspector pane to have access to the private members
+  friend class ImGuiViewportPane;   //allow Viewport pane to have access to the private members
 };
 }
 

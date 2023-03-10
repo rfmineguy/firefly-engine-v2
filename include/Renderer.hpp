@@ -2,6 +2,7 @@
 #define RENDERER_HPP
 #include "../include/Framebuffer.hpp"
 #include "../include/Components.hpp"
+#include "../include/Geometry.hpp"
 
 namespace FF {
 class Renderer {
@@ -16,6 +17,8 @@ public:
   void SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer>);
 
 private:
+  // store RECTANGLE, TRIANGLE, CIRCLE, POLYGON
+  FF::Geometry* geometry[ShapeRenderer::SHAPE_COUNT];
   
 private:
   std::weak_ptr<FF::Framebuffer> fb;

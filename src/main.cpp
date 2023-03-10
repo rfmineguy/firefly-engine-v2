@@ -8,6 +8,7 @@
 #include "../include/ImGuiLayer.hpp"
 #include "../include/Framebuffer.hpp"
 #include "../include/Renderer.hpp"
+#include "../include/Geometry.hpp"
 
 void scene_test() {
   std::cout << "-==================================-" << std::endl;
@@ -32,14 +33,27 @@ void framebuffer_test() {
   FF::Window w;
 }
 
+void geometry_test() {
+  FF::Geometry& g = FF::Geometry::Quad();
+  std::cout << g.vertices.size() << std::endl;
+  std::cout << g.indices.size() << std::endl;
+  
+  FF::Geometry& g2 = FF::Geometry::Quad();
+  std::cout << g2.vertices.size() << std::endl;
+  std::cout << g2.indices.size() << std::endl;
+}
+
 // #define SCENE_TEST
 // #define FRAMEBUFFER_TEST
+#define GEOMETRY_TEST
 
 int main() {
 #ifdef SCENE_TEST
   scene_test();
 #elifdef FRAMEBUFFER_TEST
   framebuffer_test();
+#elifdef GEOMETRY_TEST
+  geometry_test();
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);

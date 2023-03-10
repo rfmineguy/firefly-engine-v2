@@ -5,19 +5,22 @@
 #include "Renderer.hpp"
 #include "Scene.hpp"
 
+namespace FF {
 class ImGuiViewportPane : public ImGuiPane {
 public:
-  ImGuiViewportPane(FF::Scene&);
+  ImGuiViewportPane(Scene&);
   ~ImGuiViewportPane();
-  virtual void Show(FF::Window&);
+  virtual void Show(Window&);
 
   // ImGuiViewportPane is a friend of Scene
   void RenderScene();
+  void RenderEntityNode(Entity*);
   
 private:
   FF::Renderer renderer;
   ImVec2 last_viewport_size;
   FF::Scene& scene;
 };
+}
 
 #endif

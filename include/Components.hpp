@@ -19,7 +19,7 @@ struct Transform {
 
 struct ShapeRenderer {
   enum Shape {
-    RECTANGLE, TRIANGLE, CIRCLE, POLYGON
+    RECTANGLE, TRIANGLE, CIRCLE, POLYGON, SHAPE_COUNT
   };
   ShapeRenderer() {}
   glm::vec4 color;
