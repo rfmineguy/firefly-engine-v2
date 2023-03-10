@@ -1,9 +1,11 @@
 #include "../include/ImGuiViewportPane.hpp"
 #include <glm-src/glm/gtx/transform.hpp>
+#include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):
-  ImGuiPane("Viewport"), scene(_scene) {}
+  ImGuiPane("Viewport"), scene(_scene) {
+}
 
 ImGuiViewportPane::~ImGuiViewportPane() {}
 
@@ -25,7 +27,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   
   if (last_viewport_size.x != viewport_size.x || last_viewport_size.y != viewport_size.y) {
     fb->Resize(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
-    renderer.UpdateProjectionMatrix(viewport_size.x, viewport_size.y);
+    renderer.UpdateProjectionMatrix(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
     last_viewport_size = viewport_size;
   }
   
@@ -46,11 +48,13 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
 
   Transform& t = node->GetComponent<Transform>();
   transform = glm::translate(transform, t.position);
-  transform = glm::scale(transform, t.scale);
   renderer.DrawQuad(transform);
-  
+
   for (int i = 0; i < node->children.size(); i++) {
     RenderEntityNode(node->children.at(i), transform);
   }
+}
+
+void ImGuiViewportPane::DisplayMat4(glm::mat4 mat) {
 }
 }

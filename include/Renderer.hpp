@@ -14,13 +14,11 @@ public:
   
   void DrawQuad();
   void DrawQuad(glm::mat4);
-  void DrawShape(const Transform&, const ShapeRenderer&);
-  void DrawSprite(const Transform&, const SpriteRenderer&);
   
   void SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer>);
 
 private:
-  void UpdateProjectionMatrix(int, int);
+  void UpdateProjectionMatrix(int, int, int, int);
 
 private:
   // store RECTANGLE, TRIANGLE, CIRCLE, POLYGON

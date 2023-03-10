@@ -10,7 +10,12 @@ struct Identifier {
 };
 
 struct Transform {
-  Transform() {}
+  Transform()
+  :position(glm::vec3(5, 0, 0)), 
+  scale(glm::vec3(5)),
+  rotation(glm::vec3(0)),
+  rotation_center(glm::vec3(0)) {}
+
   glm::vec3 position;
   glm::vec3 scale;
   glm::vec3 rotation;

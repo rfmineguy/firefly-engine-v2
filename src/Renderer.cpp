@@ -10,7 +10,8 @@
 
 namespace FF {
 Renderer::Renderer(): 
-  shader("res/test.vert", "res/test.frag")  {}
+  shader("res/test.vert", "res/test.frag")  {
+}
 
 Renderer::~Renderer() {}
 
@@ -60,37 +61,14 @@ void Renderer::DrawQuad(glm::mat4 transform) {
   shader.Unbind();
   q.Unbind();
   fb.lock()->Unbind();
-}
-
-void Renderer::DrawShape(const Transform& t, const ShapeRenderer& shapeRenderer) {
-  if (fb.expired())
-    return;
-  FF::Geometry& q = FF::Geometry::Quad();
-  fb.lock()->Bind();
-  q.Bind();
-  shader.Bind();
-  shader.SetUniformMat4("model", glm::mat4(1.0f));
-  shader.SetUniformMat4("view", glm::mat4(1.0f));
-  shader.SetUniformMat4("proj", projection);
-  
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-  shader.Unbind();
-  q.Unbind();
-  fb.lock()->Unbind();
-}
-
-void Renderer::DrawSprite(const Transform& t, const SpriteRenderer& spriteRenderer) {
-  if (fb.expired())
-    return;
+  std::cout << "Rendered quad" << std::endl;
 }
 
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {
   fb = _fb;
 }
 
-void Renderer::UpdateProjectionMatrix(int newW, int newH) {
-  std::cout << "Update Proj: " << newW << " x " << newH << std::endl;
-  projection = glm::ortho(0.f, (float)newW, (float)newH, 0.f, 0.f, 1000.f);
+void Renderer::UpdateProjectionMatrix(int newX, int newY, int newW, int newH) {
+  projection = glm::ortho((float)newX, (float)newW, (float)newH, (float)newY, 0.f, 1000.f);
 }
 }

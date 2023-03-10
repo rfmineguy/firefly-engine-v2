@@ -9,7 +9,7 @@ Scene::Scene(): entity_count(0) {
   entity_tree_root = new Entity("root", registry);
   entity_tree_root->AddComponent<Identifier>("root");
   entity_tree_root->AddComponent<Transform>();
-  entity_tree_root->GetComponent<Transform>().scale = glm::vec3(100, 100, 100);
+  entity_tree_root->AddComponent<ShapeRenderer>();
   std::cout << "Created scene tree" << std::endl;
 }
 
@@ -35,6 +35,7 @@ Entity* Scene::NewEntity(const std::string& name) {
   Entity *e = new Entity(name, registry);
   e->AddComponent<Identifier>(name);
   e->AddComponent<Transform>();
+  e->AddComponent<ShapeRenderer>();
   entity_tree_root->AddChild(e);
   entity_count++;
   return e;

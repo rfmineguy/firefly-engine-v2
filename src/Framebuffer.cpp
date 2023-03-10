@@ -43,12 +43,10 @@ void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
   glBindRenderbuffer(GL_RENDERBUFFER, rbo);
   glRenderbufferStorage(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-    // std::cout << "Framebuffer complete" << std::endl;
-  }
-  else {
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cout << "Framebuffer incomplete" << std::endl;
   }
+
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   width = newWidth;
   height = newHeight;
