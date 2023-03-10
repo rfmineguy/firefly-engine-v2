@@ -1,4 +1,5 @@
 #include "../include/Geometry.hpp"
+#include "../include/Logger.hpp"
 #include <iostream>
 #include <glad-build/include/glad/glad.h>
 
@@ -6,14 +7,13 @@ namespace FF {
 Geometry::Geometry() {}
 
 Geometry::~Geometry() {
-  std::cout << "Destroyed geometry" << std::endl;
   glDeleteBuffers(1, &vao);
   glDeleteBuffers(1, &vbo);
   glDeleteBuffers(1, &ebo);
+  FF::Logger::Info("Deleted geometry handles (vao = {})", vao);
 }
 
 void Geometry::GenerateGLHandles() {
-  std::cout << "Generate handles" << std::endl;
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
@@ -27,6 +27,7 @@ void Geometry::GenerateGLHandles() {
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+  FF::Logger::Info("Generated geometry handles (vao = {})", vao);
 }
 
 void Geometry::Bind() {

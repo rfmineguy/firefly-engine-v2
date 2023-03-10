@@ -37,12 +37,13 @@ Shader::Shader(const std::string& vert_path, const std::string& frag_path)
     }
   }
   
-  // The shader is valid here
+  Logger::Info("Generated shader handle (programId = {})", shaderProgramHandle);
 }
 
 Shader::~Shader() {
   Unbind();
   glDeleteProgram(shaderProgramHandle);
+  Logger::Info("Deleted shader handle (programId = {})", shaderProgramHandle);
 }
 
 void Shader::Bind() {

@@ -76,7 +76,6 @@ int main() {
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);
-  // FF::Logger::Initialize();
 
   while (!window.ShouldClose()) {
     // ImGui Rendering

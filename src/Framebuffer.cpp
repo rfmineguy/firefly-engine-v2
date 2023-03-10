@@ -1,4 +1,5 @@
 #include "../include/Framebuffer.hpp"
+#include "../include/Logger.hpp"
 #include <glad-build/include/glad/glad.h>
 #include <iostream>
 
@@ -14,13 +15,14 @@ Framebuffer::Framebuffer(int w, int h)
     Each buffer should have the same number of samples.
   */  
   Resize(0, 0, w, h);
+  Logger::Info("Created framebuffer ({} x {})", w, h);
 }
 
 Framebuffer::~Framebuffer() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDeleteFramebuffers(1, &fbo);
   glDeleteTextures(1, &color_attachment_tex);
-  std::cout << "Deleted framebuffer" << std::endl;
+  Logger::Info("Deleted framebuffer");
 }
 
 void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
