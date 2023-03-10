@@ -22,6 +22,16 @@ void Renderer::ClearColor(int r, int g, int b) {
   fb.lock()->Unbind();
 }
 
+void Renderer::DrawQuad() {
+  if (fb.expired())
+    return;
+  FF::Geometry& q = FF::Geometry::Quad();
+  q.Bind();
+  // TODO: I need a shader in order to draw anything
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  q.Unbind();
+}
+
 void Renderer::DrawShape(const Transform& t, const ShapeRenderer& shapeRenderer) {
   if (fb.expired())
     return;

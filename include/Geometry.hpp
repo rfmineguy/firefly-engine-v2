@@ -37,6 +37,10 @@ private:
   
 private:
   void GenerateGLHandles();
+
+public:
+  void Bind();
+  void Unbind();
   
 public:
   std::vector<Vertex> vertices;
@@ -47,6 +51,8 @@ private:
   unsigned int vao;
   unsigned int vbo;
   unsigned int ebo;
+
+friend class Renderer;
 };
 }
 

@@ -11,6 +11,7 @@ public:
   ~Renderer();
   void ClearColor(int, int, int);
   
+  void DrawQuad();
   void DrawShape(const Transform&, const ShapeRenderer&);
   void DrawSprite(const Transform&, const SpriteRenderer&);
   
