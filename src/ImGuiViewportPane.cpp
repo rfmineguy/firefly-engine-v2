@@ -1,6 +1,7 @@
 #include "../include/ImGuiViewportPane.hpp"
 #include <glm-src/glm/gtx/transform.hpp>
 #include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
+#include <memory>
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):

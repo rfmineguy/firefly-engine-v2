@@ -1,5 +1,6 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
+#include <memory>
 #include "../include/Framebuffer.hpp"
 #include "../include/Components.hpp"
 #include "../include/Geometry.hpp"
