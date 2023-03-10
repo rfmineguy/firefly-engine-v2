@@ -16,7 +16,7 @@ Entity::Entity(std::shared_ptr<entt::registry> reg)
 :Entity("unnamed", reg) {}
 
 Entity::Entity(const std::string& name, std::shared_ptr<entt::registry> reg)
-:name(name), handle(reg->create()), registry_ptr(reg) {}
+:name(name), handle(reg->create()), registry_ptr(reg), parent(nullptr) {}
 
 Entity::Entity() {}
 
