@@ -1,6 +1,6 @@
 #include "../include/ImGuiMenuPane.hpp"
 #include "../include/Logger.hpp"
-#include <nfd-extended-src/src/include/nfd.h>
+#include <nfd_extended-src/src/include/nfd.h>
 
 namespace FF {
 
