@@ -20,22 +20,26 @@ public:
   
   template <typename ...Args>
   static void Info(const std::string& msg, Args&&... args) {
-    Get().spdlog_logger.get()->info(msg.c_str(), std::forward<Args>(args)...);
+    spdlog::format_string_t<std::string> t(msg);
+    Get().spdlog_logger.get()->info(t, std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Warn(const std::string& msg, Args&&... args) {
-    Get().spdlog_logger.get()->warn(msg.c_str(), std::forward<Args>(args)...);
+    spdlog::format_string_t<std::string> t(msg);
+    Get().spdlog_logger.get()->warn(t, std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Debug(const std::string& msg, Args&&... args) {
-    Get().spdlog_logger.get()->debug(msg.c_str(), std::forward<Args>(args)...);
+    spdlog::format_string_t<std::string> t(msg);
+    Get().spdlog_logger.get()->debug(t, std::forward<Args>(args)...);
   }
 
   template <typename ...Args>
   static void Error(const std::string& msg, Args&&... args) {
-    Get().spdlog_logger.get()->error(msg.c_str(), std::forward<Args>(args)...);
+    spdlog::format_string_t<std::string> t(msg);
+    Get().spdlog_logger.get()->error(t, std::forward<Args>(args)...);
   }
 
 private:
