@@ -28,7 +28,6 @@ void Renderer::ClearColor(int r, int g, int b) {
 void Renderer::DrawQuad() {
   if (fb.expired())
     return;
-
   FF::Geometry& q = FF::Geometry::Quad();
   fb.lock()->Bind();
   q.Bind();
@@ -62,6 +61,7 @@ void Renderer::DrawQuad(glm::mat4 transform) {
   shader.Unbind();
   q.Unbind();
   fb.lock()->Unbind();
+  std::cout << "Rendered quad" << std::endl;
 }
 
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {

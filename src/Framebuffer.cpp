@@ -15,7 +15,7 @@ Framebuffer::Framebuffer(int w, int h)
     Each buffer should have the same number of samples.
   */  
   Resize(0, 0, w, h);
-  Logger::Info("Created framebuffer ({} x {})", w, h);
+  Logger::Info("Created framebuffer");
 }
 
 Framebuffer::~Framebuffer() {
