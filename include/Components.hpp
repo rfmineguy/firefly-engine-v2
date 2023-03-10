@@ -25,4 +25,10 @@ struct ShapeRenderer {
   glm::vec4 color;
   Shape shape;
 };
+
+struct SpriteRenderer {
+  SpriteRenderer() {}
+  glm::vec4 color_tint;
+};
+
 #endif

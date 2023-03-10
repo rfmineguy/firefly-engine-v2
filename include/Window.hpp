@@ -18,7 +18,7 @@ public:
   bool ShouldClose();
   void CloseWindow();
   friend GLFWwindow* GetWindowPtr(Window*);    //Used in ImGuiLayer.cpp
-  FF::Framebuffer& GetFramebuffer();
+  std::shared_ptr<FF::Framebuffer> GetFramebuffer();
 
 private:
   void InitWindow(const std::string&, int, int);
@@ -26,7 +26,7 @@ private:
   static void framebuffer_size_callback(GLFWwindow*, int, int);
 
 private:
-  FF::Framebuffer* fb;
+  std::shared_ptr<FF::Framebuffer> fb;
   GLFWwindow* window_ptr;
 };
 }

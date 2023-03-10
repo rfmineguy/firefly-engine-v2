@@ -11,6 +11,7 @@ public:
   virtual void Show(FF::Window&);
 
 private:
+  // ImGuiHeirarchyPane is a friend of Scene
   void ShowHeirarchy(FF::Entity*);
   bool ShowEntityNode(FF::Entity*);
   

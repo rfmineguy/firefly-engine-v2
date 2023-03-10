@@ -16,6 +16,7 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
   if (scene.selected_entity) {
     if (scene.selected_entity->HasComponent<Identifier>()) {
       ImGui::Text("%s", scene.selected_entity->GetComponent<Identifier>().id.c_str());
+      ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<Transform>()) {
       Transform& t = scene.selected_entity->GetComponent<Transform>();
@@ -29,6 +30,11 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
       ShapeRenderer& s = scene.selected_entity->GetComponent<ShapeRenderer>();
       ImGui::Text("ShapeRenderer");
       ImGui::DragFloat4("Color", &s.color.r, 1, 0, 255);
+      ImGui::Separator();
+    }
+    if (scene.selected_entity->HasComponent<SpriteRenderer>()) {
+      SpriteRenderer& spr = scene.selected_entity->GetComponent<SpriteRenderer>();
+      ImGui::Text("SpriteRenderer");
       ImGui::Separator();
     }
   }
@@ -47,6 +53,12 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
         scene.selected_entity->AddComponent<ShapeRenderer>();
       }
     }
+    if (!scene.selected_entity->HasComponent<SpriteRenderer>()) {
+      if (ImGui::Button("SpriteRenderer")) {
+        scene.selected_entity->AddComponent<SpriteRenderer>();
+      }
+    }
+
     ImGui::EndPopup();
   }
   ImGui::End();

@@ -33,7 +33,7 @@ namespace FF {
 
   void ImGuiLayer::RegisterPanes() {
     Get().panes.emplace("demo", new ImGuiDemoWindowPane());
-    Get().panes.emplace("viewport", new ImGuiViewportPane());
+    Get().panes.emplace("viewport", new ImGuiViewportPane(Get().scene));
     Get().panes.emplace("log", new ImGuiLogPane());
     Get().panes.emplace("heirarchy", new ImGuiHeirarchyPane(Get().scene));
     Get().panes.emplace("inspector", new ImGuiInspectorPane(Get().scene));

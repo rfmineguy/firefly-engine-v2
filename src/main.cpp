@@ -7,6 +7,7 @@
 #include "../include/EngineSettings.hpp"
 #include "../include/ImGuiLayer.hpp"
 #include "../include/Framebuffer.hpp"
+#include "../include/Renderer.hpp"
 
 void scene_test() {
   std::cout << "-==================================-" << std::endl;
@@ -29,7 +30,6 @@ void framebuffer_test() {
   std::cout << "      Testing the framebuffer" << std::endl;
   std::cout << "-==================================-" << std::endl;
   FF::Window w;
-  FF::Framebuffer fb(600, 600);
 }
 
 // #define SCENE_TEST
@@ -46,11 +46,6 @@ int main() {
   // FF::Logger::Initialize();
 
   while (!window.ShouldClose()) {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    // Game world rendering
-    //  ...
-    
     // ImGui Rendering
     FF::ImGuiLayer::BeginFrame();
     FF::ImGuiLayer::BeginDockspace(window);
