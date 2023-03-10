@@ -21,6 +21,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
+  ImGui::Text("Resize viewport to see entities rendered");
   
   // Handle viewport resizing
   ImVec2 viewport_size = ImGui::GetContentRegionAvail();

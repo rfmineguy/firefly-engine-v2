@@ -12,6 +12,17 @@ file (COPY res DESTINATION ${CMAKE_BINARY_DIR})
 include(FetchContent)
 
 # ==============================
+# Library list
+# ==============================
+#   - glfw
+#   - glad
+#   - glm
+#   - spdlog
+#   - imgui    (docking)
+#   - entt
+#   - nfd-extended
+
+# ==============================
 # Get the GLFW windowing library
 # ==============================
 FetchContent_Declare(
@@ -113,6 +124,22 @@ if (NOT entt_POPULATED)
   add_subdirectory(${entt_SOURCE_DIR} ${entt_BINARY_DIR})
 endif()
 
+# ==============================
+# Get the nfd-extended library
+# ==============================
+FetchContent_Declare(
+  nfd_extended
+  GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
+  GIT_TAG v1.0.1
+)
+
+FetchContent_GetProperties(nfd_extended)
+if (NOT nfd_extended_POPULATED)
+  FetchContent_Populate(nfd_extended)
+  message(${nfd_extended_SOURCE_DIR})
+  add_subdirectory(${nfd_extended_SOURCE_DIR} ${nfd_extended_BINARY_DIR})
+endif()
+
 add_executable(ff_engine
   src/main.cpp
   src/Entity.cpp
@@ -125,11 +152,19 @@ add_executable(ff_engine
   src/ImGuiHeirarchyPane.cpp
   src/ImGuiDemoWindowPane.cpp
   src/ImGuiInspectorPane.cpp
+  src/ImGuiMenuPane.cpp
   src/Scene.cpp
   src/Geometry.cpp
   src/Shader.cpp
   src/Logger.cpp
 )
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT)
-target_include_directories(ff_engine PRIVATE ${spdlog_SOURCE_DIR}/include/spdlog ${glfw_SOURCE_DIR}/include/ ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/ ${imgui_SOURCE_DIR}/ ${entt_SOURCE_DIR}/single_include/)
+target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd)
+target_include_directories(ff_engine PRIVATE 
+  ${spdlog_SOURCE_DIR}/include/spdlog 
+  ${glfw_SOURCE_DIR}/include/ 
+  ${glm_SOURCE_DIR}/ ${glad_SOURCE_DIR}/
+  ${imgui_SOURCE_DIR}/
+  ${entt_SOURCE_DIR}/single_include/
+  ${nfd-extended_SOURCE_DIR}/src/include/
+)

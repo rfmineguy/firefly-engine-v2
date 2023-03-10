@@ -28,6 +28,7 @@ void Renderer::ClearColor(int r, int g, int b) {
 void Renderer::DrawQuad() {
   if (fb.expired())
     return;
+
   FF::Geometry& q = FF::Geometry::Quad();
   fb.lock()->Bind();
   q.Bind();

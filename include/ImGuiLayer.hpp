@@ -28,7 +28,6 @@ public:
   static void BeginDockspace(FF::Window&);
   static void EndDockspace();
   
-  static void ShowMainMenuBar(FF::Window&);
   static void ShowRegisteredPanes(FF::Window&);
   
 protected:

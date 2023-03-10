@@ -21,9 +21,9 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
     if (scene.selected_entity->HasComponent<Transform>()) {
       Transform& t = scene.selected_entity->GetComponent<Transform>();
       ImGui::Text("Transform");
-      ImGui::DragFloat3("Position", &t.position.x);
-      ImGui::DragFloat3("Scale", &t.scale.x);
-      ImGui::DragFloat3("Rotation", &t.rotation.x);
+      ImGui::DragFloat3("Position", &t.position.x, 0.05);
+      ImGui::DragFloat3("Scale", &t.scale.x, 0.05f);
+      ImGui::DragFloat3("Rotation", &t.rotation.x, 0.05f);
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<ShapeRenderer>()) {

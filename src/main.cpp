@@ -83,7 +83,6 @@ int main() {
     FF::ImGuiLayer::BeginFrame();
     FF::ImGuiLayer::BeginDockspace(window);
 
-    FF::ImGuiLayer::ShowMainMenuBar(window);
     FF::ImGuiLayer::ShowRegisteredPanes(window);
 
     FF::ImGuiLayer::EndDockspace();
