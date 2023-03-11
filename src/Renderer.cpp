@@ -3,17 +3,14 @@
 #include <iostream>
 #include <glm-src/glm/gtc/matrix_transform.hpp>
 
-#define FB_ASSERT_VALID(fb) \
-  if (fb == nullptr) \
-    std::cerr << "Active framebuffer is invalid" << std::endl; \
-    return \
-
 namespace FF {
-Renderer::Renderer(): 
-  shader("res/test.vert", "res/test.frag")  {
+Renderer::Renderer() {
+  shaders.emplace("test_shader", std::make_unique<Shader>("res/test.vert", "res/test.frag"));
+  shaders.emplace("shape_renderer_shader", std::make_unique<Shader>("res/shape_renderer.vert", "res/shape_renderer.frag"));
 }
 
-Renderer::~Renderer() {}
+Renderer::~Renderer() {
+}
 
 void Renderer::ClearColor(int r, int g, int b) {
   if (fb.expired())
@@ -26,21 +23,7 @@ void Renderer::ClearColor(int r, int g, int b) {
 }
 
 void Renderer::DrawQuad() {
-  if (fb.expired())
-    return;
-  FF::Geometry& q = FF::Geometry::Quad();
-  fb.lock()->Bind();
-  q.Bind();
-  shader.Bind();
-  shader.SetUniformMat4("model", glm::mat4(1.0f));
-  shader.SetUniformMat4("view", glm::mat4(1.0f));
-  shader.SetUniformMat4("proj", projection);
-  
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  
-  shader.Unbind();
-  q.Unbind();
-  fb.lock()->Unbind();
+  DrawQuad(glm::mat4(1.0f));
 }
 
 void Renderer::DrawQuad(glm::mat4 transform) {
@@ -51,17 +34,20 @@ void Renderer::DrawQuad(glm::mat4 transform) {
   fb.lock()->Bind();
   q.Bind();
 
-  shader.Bind();
-  shader.SetUniformMat4("model", transform);
-  shader.SetUniformMat4("view", glm::mat4(1.0f));
-  shader.SetUniformMat4("proj", projection);
+  FF::Shader* s = shaders.at("test_shader").get();
+  if (!s)
+    return;
+  
+  s->Bind();
+  s->SetUniformMat4("model", transform);
+  s->SetUniformMat4("view", glm::mat4(1.0f));
+  s->SetUniformMat4("proj", projection);
   
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   
-  shader.Unbind();
+  s->Unbind();
   q.Unbind();
   fb.lock()->Unbind();
-  std::cout << "Rendered quad" << std::endl;
 }
 
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {

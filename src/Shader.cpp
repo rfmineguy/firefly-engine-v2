@@ -15,18 +15,27 @@ std::string ReadFile(std::ifstream& f) {
 }
 
 Shader::Shader(const std::string& vert_path, const std::string& frag_path)
-:vertexShaderPath(vert_path), fragmentShaderPath(frag_path)
+:vertexShaderPath(vert_path), fragmentShaderPath(frag_path),
+vertexShaderHandle(-1), fragmentShaderHandle(-1)
 {
   std::ifstream f(vert_path);
-  std::string vert_contents = ReadFile(f);
+  try {
+    std::string vert_contents = ReadFile(f);
+    vertexShaderHandle   = CompileShader(GL_VERTEX_SHADER, vert_contents);
+  } catch (std::string& s) {
+    std::cerr << s << std::endl;
+  }
   f.close();
   
   std::ifstream f2(frag_path);
-  std::string frag_contents = ReadFile(f2);
+  try {
+    std::string frag_contents = ReadFile(f2);
+    fragmentShaderHandle = CompileShader(GL_FRAGMENT_SHADER, frag_contents);
+  } catch (std::string& s) {
+    std::cerr << s << std::endl;
+  }
   f2.close();
   
-  vertexShaderHandle   = CompileShader(GL_VERTEX_SHADER, vert_contents);
-  fragmentShaderHandle = CompileShader(GL_FRAGMENT_SHADER, frag_contents);
   if (vertexShaderHandle == -1 || fragmentShaderHandle == -1) {
     Logger::Warn("One of the shaders failed to compile");
   }

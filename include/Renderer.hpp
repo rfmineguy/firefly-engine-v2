@@ -1,6 +1,7 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 #include <memory>
+#include <unordered_map>
 #include "../include/Framebuffer.hpp"
 #include "../include/Components.hpp"
 #include "../include/Geometry.hpp"
@@ -24,7 +25,7 @@ private:
 private:
   // store RECTANGLE, TRIANGLE, CIRCLE, POLYGON
   FF::Geometry* geometry[ShapeRenderer::SHAPE_COUNT];
-  FF::Shader shader;
+  std::unordered_map<std::string, std::unique_ptr<FF::Shader>> shaders;
   glm::mat4 projection;
   glm::mat4 view;
   

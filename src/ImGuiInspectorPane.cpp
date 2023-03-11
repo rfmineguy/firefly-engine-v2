@@ -19,11 +19,21 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<Transform>()) {
+      static bool toggle_2d = true;
+      ImGui::Checkbox("Toggle 2D", &toggle_2d);
       Transform& t = scene.selected_entity->GetComponent<Transform>();
       ImGui::Text("Transform");
-      ImGui::DragFloat3("Position", &t.position.x, 0.05);
-      ImGui::DragFloat3("Scale", &t.scale.x, 0.05f);
-      ImGui::DragFloat3("Rotation", &t.rotation.x, 0.05f);
+      if (toggle_2d) {
+        ImGui::DragFloat2("Position", &t.position.x, 0.05);
+        ImGui::DragFloat2("Scale", &t.scale.x, 0.05f);
+        ImGui::DragFloat2("Rotation", &t.rotation.x, 0.05f);               
+      }
+      else {
+        ImGui::DragFloat3("Position", &t.position.x, 0.05);
+        ImGui::DragFloat3("Scale", &t.scale.x, 0.05f);
+        ImGui::DragFloat3("Rotation", &t.rotation.x, 0.05f);        
+      }
+
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<ShapeRenderer>()) {
