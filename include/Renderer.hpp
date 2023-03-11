@@ -16,6 +16,7 @@ public:
   
   void DrawQuad();
   void DrawQuad(glm::mat4);
+  void DrawQuad(glm::mat4, glm::vec4);
   
   void SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer>);
 

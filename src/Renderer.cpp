@@ -1,4 +1,5 @@
 #include "../include/Renderer.hpp"
+#include "../include/Logger.hpp"
 #include <glad/glad.h>
 #include <iostream>
 #include <glm-src/glm/gtc/matrix_transform.hpp>
@@ -27,27 +28,40 @@ void Renderer::DrawQuad() {
 }
 
 void Renderer::DrawQuad(glm::mat4 transform) {
-  if (fb.expired())
+  DrawQuad(transform, glm::vec4(1.0f));
+}
+
+void Renderer::DrawQuad(glm::mat4 transform, glm::vec4 color) {  
+  Logger::Info("DrawQuad");
+  if (fb.expired()) {
+    Logger::Error("Framebuffer null");    
     return;
+  }
 
   FF::Geometry& q = FF::Geometry::Quad();
   fb.lock()->Bind();
   q.Bind();
 
-  FF::Shader* s = shaders.at("test_shader").get();
-  if (!s)
+  FF::Shader* s = shaders.at("shape_renderer_shader").get();
+  if (!s) {
+    Logger::Warn("Shader null");
     return;
+  }
   
+  Logger::Info("r={}, g={}, b={}, a={}", color.r, color.g, color.b, color.a);
   s->Bind();
   s->SetUniformMat4("model", transform);
   s->SetUniformMat4("view", glm::mat4(1.0f));
   s->SetUniformMat4("proj", projection);
+  s->SetUniformVec4("color", color);
   
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   
   s->Unbind();
   q.Unbind();
   fb.lock()->Unbind();
+  Logger::Info("DrawQuad End");
+
 }
 
 void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {

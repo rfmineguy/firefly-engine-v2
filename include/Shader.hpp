@@ -17,6 +17,7 @@ public:
   
 public:
   void SetUniformMat4(const std::string&, glm::mat4);
+  void SetUniformVec4(const std::string&, glm::vec4);
   
 private:
   unsigned int CompileShader(GLenum, const std::string&);

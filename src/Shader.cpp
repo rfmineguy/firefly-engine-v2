@@ -68,6 +68,11 @@ void Shader::SetUniformMat4(const std::string& uniName, glm::mat4 matrix) {
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Shader::SetUniformVec4(const std::string& uniName, glm::vec4 color) {
+  unsigned int loc = GetUniformLocation(uniName);
+  glUniform4fv(loc, 4, glm::value_ptr(color));
+}
+
 std::string Shader::ShaderTypeToString(GLenum t) {
   switch (t) {
   case GL_VERTEX_SHADER:   return "Vertex";

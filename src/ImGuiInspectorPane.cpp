@@ -39,7 +39,7 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
     if (scene.selected_entity->HasComponent<ShapeRenderer>()) {
       ShapeRenderer& s = scene.selected_entity->GetComponent<ShapeRenderer>();
       ImGui::Text("ShapeRenderer");
-      ImGui::DragFloat4("Color", &s.color.r, 1, 0, 255);
+      ImGui::ColorEdit4("Color", &s.color.r);
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<SpriteRenderer>()) {
