@@ -58,6 +58,7 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
     }
     transform = glm::translate(transform, t->position);
     transform = glm::scale(transform, t->scale);
+    transform = glm::rotate(transform, t->rotation.x, glm::vec3(0, 0, 1));
     renderer.DrawQuad(transform, rs->color);
   }
 

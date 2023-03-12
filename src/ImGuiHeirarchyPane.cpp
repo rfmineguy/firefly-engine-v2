@@ -80,8 +80,10 @@ int ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
   }
   if (ImGui::BeginPopup("RightClickEntityMenu")) {
     if (right_click_selection_id == node_id && ImGui::Button("Delete Entity")) {
-      // TODO: Going to have to implment something quite a bit more complex
-      //       here due to the fact that we're deleting the node being currently processed
+      /*
+        NOTE: While the entity isn't deleted here, it IS guarunteed to be freed when the program ends
+        Future plans to implement a free list for entity reuse
+      */
       node->MarkDirty(true);
     }
     ImGui::EndPopup();
