@@ -21,6 +21,7 @@ include(FetchContent)
 #   - imgui    (docking)
 #   - entt
 #   - nfd-extended
+#   - yaml-cpp      (yaml parser)
 
 # ==============================
 # Get the GLFW windowing library
@@ -140,6 +141,24 @@ if (NOT nfd_extended_POPULATED)
   add_subdirectory(${nfd_extended_SOURCE_DIR} ${nfd_extended_BINARY_DIR})
 endif()
 
+
+# ==============================
+# Get the yaml-cpp library
+# ==============================
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG yaml-cpp-0.7.0
+)
+
+FetchContent_GetProperties(yaml-cpp)
+if (NOT yaml-cpp_POPULATED)
+  FetchContent_Populate(yaml-cpp)
+  message(${yaml-cpp_SOURCE_DIR})
+  add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
+endif()
+
+
 add_executable(ff_engine
   src/main.cpp
   src/Entity.cpp
@@ -159,7 +178,7 @@ add_executable(ff_engine
   src/Logger.cpp
 )
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd)
+target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd yaml-cpp)
 target_include_directories(ff_engine PRIVATE 
   ${spdlog_SOURCE_DIR}/include/spdlog 
   ${glfw_SOURCE_DIR}/include/ 
@@ -167,4 +186,5 @@ target_include_directories(ff_engine PRIVATE
   ${imgui_SOURCE_DIR}/
   ${entt_SOURCE_DIR}/single_include/
   ${nfd-extended_SOURCE_DIR}/src/include/
+  ${yaml-cpp_SOURCE_DIR}
 )
