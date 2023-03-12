@@ -11,14 +11,14 @@ Scene::Scene(): entity_count(0) {
   entity_tree_root->AddComponent<Identifier>("root");
   entity_tree_root->AddComponent<Transform>();
   entity_tree_root->AddComponent<ShapeRenderer>();
-  Logger::Info("Created scene tree");
+  FF_LOG_INFO("Created scene tree");
 }
 
 Scene::~Scene() {
   Clean(entity_tree_root);
   delete entity_tree_root;
   entity_tree_root = nullptr;
-  Logger::Info("Deleted scene tree");
+  FF_LOG_INFO("Deleted scene tree");
 }
 
 void Scene::Clean(Entity* root) {
@@ -42,9 +42,12 @@ Entity* Scene::NewEntity(const std::string& name) {
   return e;
 }
 
-void Scene::DeleteEntity(Entity e) {
-  //NOTE: Never used yet
-  entity_count--;
+void Scene::DeleteEntity(Entity*& entity) {
+  Clean(entity);
+  Entity* p = entity->parent;
+  p->RemoveChild(entity);
+  delete entity;
+  entity = nullptr;
 }
 
 Entity Scene::FindEntity(const std::string& id) {
@@ -52,7 +55,7 @@ Entity Scene::FindEntity(const std::string& id) {
 }
 
 void Scene::Traverse() {
-  Logger::Debug("Traversing scene");
+  FF_LOG_DEBUG("Traversing scene");
   TraverseRec(entity_tree_root, 0);
 }
 
@@ -63,7 +66,7 @@ void Scene::TraverseRec(Entity* root, int level) {
     std::cout << "  ";
   }
   std::cout << "\\_";
-  std::cout << root->GetComponent<Identifier>().id << std::endl;
+  std::cout << root->GetComponent<Identifier>()->id << std::endl;
   for (int i = 0; i < root->children.size(); i++) {
     TraverseRec(root->children[i], level+1);
   }
@@ -85,7 +88,8 @@ Entity* Scene::FindEntityNodeRec(Entity* root, const std::string& id) {
   Entity* found = nullptr;
   if (root == nullptr)
     return nullptr;
-  if (root->GetComponent<Identifier>().id == id)
+  Identifier* id_comp = root->GetComponent<Identifier>();
+  if (id_comp && id_comp->id == id)
     return root;
 
   if (root->children.size() == 0)

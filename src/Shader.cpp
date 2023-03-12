@@ -37,22 +37,22 @@ vertexShaderHandle(-1), fragmentShaderHandle(-1)
   f2.close();
   
   if (vertexShaderHandle == -1 || fragmentShaderHandle == -1) {
-    Logger::Warn("One of the shaders failed to compile");
+    FF_LOG_WARN("One of the shaders failed to compile");
   }
   else {
     shaderProgramHandle = LinkProgram();
     if (shaderProgramHandle == -1) {
-      Logger::Warn("The shader program failed to link");
+      FF_LOG_WARN("The shader program failed to link");
     }
   }
   
-  Logger::Info("Generated shader handle (programId = {})", shaderProgramHandle);
+  FF_LOG_INFO("Generated shader handle (programId = {})", shaderProgramHandle);
 }
 
 Shader::~Shader() {
   Unbind();
   glDeleteProgram(shaderProgramHandle);
-  Logger::Info("Deleted shader handle (programId = {})", shaderProgramHandle);
+  FF_LOG_INFO("Deleted shader handle (programId = {})", shaderProgramHandle);
 }
 
 void Shader::Bind() {
@@ -83,7 +83,7 @@ std::string Shader::ShaderTypeToString(GLenum t) {
 
 unsigned int Shader::CompileShader(GLenum type, const std::string& contents) {
   if (type != GL_VERTEX_SHADER && type != GL_FRAGMENT_SHADER) {
-    Logger::Error("Type not supported");
+    FF_LOG_ERROR("Type not supported");
     return -1;
   }
   
@@ -97,11 +97,11 @@ unsigned int Shader::CompileShader(GLenum type, const std::string& contents) {
   glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-    Logger::Error("{} : Compilation failed", ShaderTypeToString(type));
+    FF_LOG_ERROR("{} : Compilation failed", ShaderTypeToString(type));
     return -1;
   }
   else {
-    Logger::Info("{} : Compilation successful", ShaderTypeToString(type));
+    FF_LOG_INFO("{} : Compilation successful", ShaderTypeToString(type));
   }
   
   return shader_id;
@@ -118,11 +118,11 @@ unsigned int Shader::LinkProgram() {
   glGetShaderiv(program_id, GL_LINK_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(program_id, 512, NULL, infoLog);
-    Logger::Error("Linking failed");
+    FF_LOG_ERROR("Linking failed");
     return -1;
   }
   else {
-    Logger::Info("Linking successful");
+    FF_LOG_INFO("Linking successful");
   }
 
   glDeleteShader(vertexShaderHandle);
@@ -134,7 +134,7 @@ unsigned int Shader::GetUniformLocation(const std::string& uniformName) {
   // TODO: Cache this
   unsigned int loc = glGetUniformLocation(shaderProgramHandle, uniformName.c_str());
   if (loc == -1) {
-    Logger::Warn("Uniform location: {} does not exist", uniformName);
+    FF_LOG_WARN("Uniform location: {} does not exist", uniformName);
   }
   return loc;
 }

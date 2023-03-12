@@ -11,7 +11,7 @@ public:
   Scene();
   ~Scene();
   Entity* NewEntity(const std::string&);
-  void DeleteEntity(Entity);
+  void DeleteEntity(Entity*&);
 
   // TODO: What to do when the entity doesn't exist
   Entity FindEntity(const std::string&);

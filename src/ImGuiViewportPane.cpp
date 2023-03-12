@@ -51,11 +51,14 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, glm::mat4 transform) {
     return;
 
   if (node->HasComponent<ShapeRenderer>() && node->HasComponent<Transform>()) {
-    ShapeRenderer& rs = node->GetComponent<ShapeRenderer>();
-    Transform& t = node->GetComponent<Transform>();
-    transform = glm::translate(transform, t.position);
-    transform = glm::scale(transform, t.scale);
-    renderer.DrawQuad(transform, rs.color);
+    ShapeRenderer* rs = node->GetComponent<ShapeRenderer>();
+    Transform* t = node->GetComponent<Transform>();
+    if (!rs || !t) {
+        return;
+    }
+    transform = glm::translate(transform, t->position);
+    transform = glm::scale(transform, t->scale);
+    renderer.DrawQuad(transform, rs->color);
   }
 
   for (int i = 0; i < node->children.size(); i++) {

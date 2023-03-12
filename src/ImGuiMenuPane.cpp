@@ -7,7 +7,7 @@ namespace FF {
 ImGuiMenuPane::ImGuiMenuPane(Scene& scene, std::unordered_map<std::string, ImGuiPane*>& panes)
 :ImGuiPane("MenuPane"), scene(scene), panes(panes) {
   if (NFD_Init() != NFD_OKAY) {
-    Logger::Error("NFD Error");
+    FF_LOG_ERROR("NFD Error");
   }
 }
 
@@ -23,14 +23,14 @@ void ImGuiMenuPane::Show(Window& window) {
         nfdfilteritem_t filterItem[2] = { { "Source code", "c,cpp,cc" }, { "Headers", "h,hpp"} };
         nfdresult_t result = NFD_OpenDialog(&outpath, filterItem, 2, NULL);
         if (result == NFD_OKAY) {
-          Logger::Debug("[NFD] Open directory: {}", outpath);
+          FF_LOG_DEBUG("[NFD] Open directory: {}", outpath);
           NFD_FreePath(outpath);
         }
         else if (result == NFD_CANCEL) {
-          Logger::Debug("[NFD] Canceled");
+          FF_LOG_DEBUG("[NFD] Canceled");
         }
         else {
-          Logger::Error("[NFD] {}", NFD_GetError());
+          FF_LOG_ERROR("[NFD] {}", NFD_GetError());
         }
       }
       if (ImGui::Button("Exit")) {

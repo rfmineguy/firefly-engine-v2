@@ -1,5 +1,6 @@
 #include "../include/Entity.hpp"
 #include "../include/Components.hpp"
+#include "../include/Logger.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -16,12 +17,14 @@ Entity::Entity(std::shared_ptr<entt::registry> reg)
 :Entity("unnamed", reg) {}
 
 Entity::Entity(const std::string& name, std::shared_ptr<entt::registry> reg)
-:name(name), handle(reg->create()), registry_ptr(reg), parent(nullptr) {}
+:name(name), handle(reg->create()), registry_ptr(reg), parent(nullptr), is_dirty(false) {}
 
 Entity::Entity() {}
 
 Entity::~Entity() {
+  FF_LOG_WARN("Entity destructor {}", name);
   entity_count --;
+  registry_ptr.lock()->destroy(handle);
 }
 
 bool Entity::operator==(const Entity& e) const {
@@ -49,6 +52,28 @@ Entity* Entity::AddChild(Entity* e) {
   children.push_back(e);
   
   return e;
+}
+
+Entity* Entity::RemoveChild(Entity* e) {
+  auto it = std::find(children.begin(), children.end(), e);
+  if (it != children.end()) {
+    children.erase(it);
+  }
+  return e;
+}
+
+void Entity::MarkDirty(bool dirty) {
+  MarkDirtyRec(this, dirty);
+}
+
+void Entity::MarkDirtyRec(Entity* e, bool dirty) {
+  if (e == nullptr) {
+    return;
+  }
+  e->is_dirty = true;
+  for (int i = 0; i < e->children.size(); i++) {
+    MarkDirtyRec(e->children.at(i), dirty);
+  }
 }
 
 /*

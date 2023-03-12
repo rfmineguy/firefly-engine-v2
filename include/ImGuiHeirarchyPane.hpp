@@ -13,13 +13,15 @@ public:
 private:
   // ImGuiHeirarchyPane is a friend of Scene
   void ShowHeirarchy(FF::Entity*);
-  bool ShowEntityNode(FF::Entity*);
+  
+  int ShowEntityNode(FF::Entity*);
+  void ValidateTree(FF::Entity*);
   
 public:
   FF::Scene& scene;
   
 private:
-  std::string selection_id;
+  std::string main_selection_id, right_click_selection_id;
 };
 }
 

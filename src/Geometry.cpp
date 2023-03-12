@@ -10,7 +10,7 @@ Geometry::~Geometry() {
   glDeleteBuffers(1, &vao);
   glDeleteBuffers(1, &vbo);
   glDeleteBuffers(1, &ebo);
-  FF::Logger::Info("Deleted geometry handles (vao = {})", vao);
+  FF_LOG_INFO("Deleted geometry handles (vao = {})", vao);
 }
 
 void Geometry::GenerateGLHandles() {
@@ -27,7 +27,7 @@ void Geometry::GenerateGLHandles() {
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
-  FF::Logger::Info("Generated geometry handles (vao = {})", vao);
+  FF_LOG_INFO("Generated geometry handles (vao = {})", vao);
 }
 
 void Geometry::Bind() {

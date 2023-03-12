@@ -15,14 +15,14 @@ Framebuffer::Framebuffer(int w, int h)
     Each buffer should have the same number of samples.
   */  
   Resize(0, 0, w, h);
-  Logger::Info("Created framebuffer");
+  FF_LOG_INFO("Created framebuffer {}x{}", w, h);
 }
 
 Framebuffer::~Framebuffer() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDeleteFramebuffers(1, &fbo);
   glDeleteTextures(1, &color_attachment_tex);
-  Logger::Info("Deleted framebuffer");
+  FF_LOG_INFO("Deleted framebuffer");
 }
 
 void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
@@ -46,7 +46,7 @@ void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
   glRenderbufferStorage(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    std::cout << "Framebuffer incomplete" << std::endl;
+    FF_LOG_WARN("Framebuffer incomplete");
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);

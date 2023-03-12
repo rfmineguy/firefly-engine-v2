@@ -10,6 +10,14 @@
 #include "../include/Geometry.hpp"
 #include "../include/Shader.hpp"
 
+/**
+NOTE: NOTE: NOTE: NOTE:
+Deleting entity with gui
+  - Instead of trying to delete the entity while the heirarchy panel is
+    rendering it. Set a flag in the entity(mark it dirty) that signifies whether
+    it should be deleted after rendering in imgui.
+**/
+
 void scene_test() {
   std::cout << "-==================================-" << std::endl;
   std::cout << "  Testing the scene data structure" << std::endl;
@@ -23,6 +31,13 @@ void scene_test() {
   FF::Entity* test = e1->AddChild(scene.NewEntity("Test"));
   FF::Entity* test2 = e1->AddChild(scene.NewEntity("Test2"));
   test2->AddChild(scene.NewEntity("Test9"));
+  // FF::Entity* d = test2->RemoveChild(scene.FindEntityNode("Test9"));
+  
+  scene.Traverse();
+  
+  FF_LOG_INFO("Deleting Entity1");
+  scene.DeleteEntity(e1);
+  FF_LOG_INFO("Deleted Entity1");
   scene.Traverse();
 }
 
@@ -53,7 +68,7 @@ void shader_test() {
 }
 
 void logger_test() {
-  FF::Logger::Info("This is the first log");
+  FF_LOG_INFO("This is the first log");
 }
 
 // #define SCENE_TEST
