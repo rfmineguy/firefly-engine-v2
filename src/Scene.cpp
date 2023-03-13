@@ -83,6 +83,9 @@ int Scene::GetEntityCount() const {
 }
 
 void Scene::DeserializeFromFile(const std::string& filepath) {
+  // Clean out previous scene
+  Clean(entity_tree_root);
+  
   // https://jsonformatter.org/yaml-viewer
   try {
     YAML::Node scene = YAML::LoadFile(filepath);
@@ -107,10 +110,12 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
       if (YAML::Node identifier = n_entity[0]["Identifier"]) {
         YAML::Node n_id = identifier["id"];
         id = n_id.as<std::string>();
-        std::cout << "Identifier:" << std::endl;
-        std::cout << "\t" << id << std::endl;
 
         p_entity = NewEntity(n_id.as<std::string>());
+        Identifier* id = p_entity->GetComponent<Identifier>();
+        std::cout << *id << std::endl;
+
+        FF_LOG_INFO("Added identifier comp");
       }
       else {
         FF_LOG_ERROR("Entity #{} has no identifier. New entity not allocated.", i);
@@ -128,18 +133,15 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
         glm::vec3 rot = glm::vec3(n_rot[0].as<float>(), n_rot[0].as<float>(), n_rot[0].as<float>());
         glm::vec3 roc = glm::vec3(n_roc[0].as<float>(), n_roc[0].as<float>(), n_roc[0].as<float>());
         
-        std::cout << "Transform:" << std::endl;
-        std::cout << "\tpos   => x: " << pos[0] << ", y: " << pos[1] << ", z: " << pos[2]<< std::endl;
-        std::cout << "\tscl   => x: " << scl[0] << ", y: " << scl[1] << ", z: " << scl[2]<< std::endl;
-        std::cout << "\trot   => x: " << rot[0] << ", y: " << rot[1] << ", z: " << rot[2]<< std::endl;
-        std::cout << "\troc   => x: " << roc[0] << ", y: " << roc[1] << ", z: " << roc[2]<< std::endl;
-
         p_entity->AddComponent<Transform>();
         Transform* t = p_entity->GetComponent<Transform>();
         t->position = pos;
         t->scale = scl;
         t->rotation = rot;
         t->rotation_center = roc;
+
+        std::cout << *t << std::endl;
+        
         FF_LOG_INFO("Added transform comp");
       }
 
@@ -158,6 +160,9 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
         ShapeRenderer* sr = p_entity->GetComponent<ShapeRenderer>();
         sr->color = color;
         sr->shape = ShapeRenderer::Shape(shape); //NOTE: is this how this works? Can you initialize an enum with an integer?
+
+        std::cout << *sr << std::endl;
+        
         FF_LOG_INFO("Added shape renderer comp");
       }
 
@@ -165,12 +170,12 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
         YAML::Node n_color_tint = sprite_ren[0]["color_tint"];
         glm::vec4 color_tint = glm::vec4(n_color_tint[0].as<float>(), n_color_tint[1].as<float>(), n_color_tint[2].as<float>(), n_color_tint[3].as<float>());
 
-        std::cout << "SpriteRenderer:" << std::endl;
-        std::cout << "\tcolor_tint   => r: " << color_tint[0] << ", g: " << color_tint[1] << ", b: " << color_tint[2] << ", a: " << color_tint[3] << std::endl;
-
         p_entity->AddComponent<SpriteRenderer>();
         SpriteRenderer* sr = p_entity->GetComponent<SpriteRenderer>();
         sr->color_tint = color_tint;
+
+        std::cout << *sr << std::endl;
+        
         FF_LOG_INFO("Added sprite renderer comp");
       }
     }
