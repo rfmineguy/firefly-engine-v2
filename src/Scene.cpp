@@ -83,101 +83,65 @@ int Scene::GetEntityCount() const {
 }
 
 void Scene::DeserializeFromFile(const std::string& filepath) {
+  // https://jsonformatter.org/yaml-viewer
   try {
     YAML::Node scene = YAML::LoadFile(filepath);
-    // std::cout << scene << std::endl;
     YAML::Node entities_arr = scene["Entities"];
+    std::cout << "Number of entities in scene file: " << entities_arr.size() << std::endl;
     std::cout << entities_arr << std::endl;
+    if (entities_arr.IsSequence()) {
+      std::cout << "IsSequence" << std::endl;
+    }
+    
+    for (int i = 0; i < entities_arr.size(); i++) {
+      std::cout << "======" << std::endl;
+      std::cout << "Entity" << std::endl;
+      std::cout << "======" << std::endl;
+      YAML::Node entity = entities_arr[i];
+      YAML::Node entity_ = entity["Entity"];
+      if (YAML::Node identifier = entity_[0]["Identifier"]) {
+        YAML::Node id = identifier["id"];
+        std::cout << "Identifier:" << std::endl;
+        std::cout << "\t" << id.as<std::string>() << std::endl;
+      }
+      if (YAML::Node transform  = entity_[1]["Transform"]) {
+        YAML::Node n_pos  = transform[0]["position"];
+        YAML::Node n_scl  = transform[1]["scale"];
+        YAML::Node n_rot  = transform[2]["rotation"];
+        YAML::Node n_roc = transform[3]["rotation_center"];
+        glm::vec3 pos = glm::vec3(n_pos[0].as<float>(), n_pos[0].as<float>(), n_pos[0].as<float>());
+        glm::vec3 scl = glm::vec3(n_scl[0].as<float>(), n_scl[0].as<float>(), n_scl[0].as<float>());
+        glm::vec3 rot = glm::vec3(n_rot[0].as<float>(), n_rot[0].as<float>(), n_rot[0].as<float>());
+        glm::vec3 roc = glm::vec3(n_roc[0].as<float>(), n_roc[0].as<float>(), n_roc[0].as<float>());
+        
+        std::cout << "Transform:" << std::endl;
+        std::cout << "\tpos   => x: " << pos[0] << ", y: " << pos[1] << ", z: " << pos[2]<< std::endl;
+        std::cout << "\tscl   => x: " << scl[0] << ", y: " << scl[1] << ", z: " << scl[2]<< std::endl;
+        std::cout << "\trot   => x: " << rot[0] << ", y: " << rot[1] << ", z: " << rot[2]<< std::endl;
+        std::cout << "\troc   => x: " << roc[0] << ", y: " << roc[1] << ", z: " << roc[2]<< std::endl;
+      }
+      if (YAML::Node shape_ren  = entity_[2]["ShapeRenderer"]) {
+        YAML::Node n_color = shape_ren[0]["color"];
+        YAML::Node n_shape = shape_ren[1]["shape"];
+        glm::vec3 color = glm::vec3(n_color[0].as<float>(), n_color[0].as<float>(), n_color[0].as<float>());
+        int shape       = n_shape.as<int>();
+
+        std::cout << "ShapeRenderer:" << std::endl;
+        std::cout << "\tcolor   => x: " << color[0] << ", y: " << color[1] << ", z: " << color[2]<< std::endl;
+        std::cout << "\tshape   => " << shape << std::endl;
+      }
+    }
   } catch (YAML::ParserException e) {
     FF_LOG_ERROR("{}", e.what());    
   }
   
-  // this is not processed
-  /*
-  try {
-    FF_LOG_INFO("Deserializing {}", filepath);
-    YAML::Node scene = YAML::LoadFile(filepath);
-    FF_LOG_INFO("Scene Node => ");
-    std:: cout << scene;
-    YAML::Node entities = scene["Entities"];
-    std::cout << entities << std::endl;
-    
-    for (int i = 0; i < entities.size(); i++) {
-      std::cout << "==========================" << std::endl;
-      // Parse identifier component
-      if (YAML::Node id = entities[i]["IdentifierComponent"]) {
-        std::string id_str = id["id"].as<std::string>();
-        std::cout << "Identifier" << std::endl;
-        std::cout << "\tId   =>   id: " << id_str << std::endl;
-      }
-
-      //   Parse transform component
-      if (YAML::Node trans = entities[i]["TransformComponent"]) {
-        YAML::Node position_node = trans["position"];
-        YAML::Node rotation_node = trans["rotation"];
-        YAML::Node scale_node = trans["scale"];
-        glm::vec3 pos = glm::vec3(
-          position_node[0].as<float>(),
-          position_node[1].as<float>(),
-          position_node[2].as<float>()
-        );
-        glm::vec3 scale = glm::vec3(
-          scale_node[0].as<float>(),
-          scale_node[1].as<float>(),
-          scale_node[2].as<float>()
-        );
-        glm::vec3 rotation = glm::vec3(
-          rotation_node[0].as<float>(),
-          rotation_node[1].as<float>(),
-          rotation_node[2].as<float>()
-        );
-        std::cout << "Transform" << std::endl;
-        std::cout << "\tPos   =>   x: " << pos.x      << ", y: " << pos.y      << ", z: " << pos.z << std::endl;
-        std::cout << "\tScale =>   x: " << scale.x    << ", y: " << scale.y    << ", z: " << scale.z << std::endl;
-        std::cout << "\tRot   =>   x: " << rotation.x << ", y: " << rotation.y << ", z: " << rotation.z << std::endl;
-      }
-      
-      //  Parse shape renderer component
-      if (YAML::Node shape_renderer = entities[i]["ShapeRendererComponent"]) {
-        YAML::Node color_node = shape_renderer["color"];
-        YAML::Node shape_node = shape_renderer["shape"];
-        glm::vec4 color = glm::vec4(
-          color_node[0].as<float>(),
-          color_node[1].as<float>(),
-          color_node[2].as<float>(),
-          color_node[3].as<float>()
-        );
-        std::string shape_str = shape_node.as<std::string>();
-        
-        std::cout << "ShapeRenderer" << std::endl;
-        std::cout << "\tColor =>  r: " << color.r << ", g: " << color.g << ", b: " << color.b << ", a: " << color.a << std::endl;
-        std::cout << "\tShape =>  shape: " << shape_str << std::endl;
-      }
-      if (YAML::Node sprite_renderer = entities[i]["SpriteRendererComponent"]) {
-        YAML::Node color_tint_node = sprite_renderer["color_tint"];
-        glm::vec4 color = glm::vec4(
-          color_tint_node[0].as<float>(),
-          color_tint_node[1].as<float>(),
-          color_tint_node[2].as<float>(),
-          color_tint_node[3].as<float>()
-        );
-        
-        std::cout << "SpriteRenderer" << std::endl;
-        std::cout << "\tColor =>  r: " << color.r << ", g: " << color.g << ", b: " << color.b << ", a: " << color.a << std::endl;
-      }
-    }
-  } catch (YAML::ParserException e) {
-    FF_LOG_ERROR("{}", e.what());
-  }
-  */
-
+  Traverse();
   FF_LOG_INFO("Deserialized scene");
 }
 
 void Scene::SerializeToFile(const std::string& filepath) {
   FF_LOG_INFO("Serializing scene");
   YAML::Emitter emitter;
-  emitter.SetIndent(4);
   
   // Use emitter
   emitter << YAML::BeginMap << YAML::Key << "Entities";
