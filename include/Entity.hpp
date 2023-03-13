@@ -47,6 +47,10 @@ public:
   void AddComponent(Args&&... args) {
     if (is_dirty || registry_ptr.expired())
       return;
+    if (HasComponent<T>()) {
+      std::cerr << "Entity('" << name << "') already has component '" << typeid(T).name() << "'" << std::endl;
+      return;
+    }
     registry_ptr.lock()->emplace<T>(handle, std::forward<Args>(args)...);
   }
   

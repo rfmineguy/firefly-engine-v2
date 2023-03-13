@@ -94,17 +94,31 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
     }
     
     for (int i = 0; i < entities_arr.size(); i++) {
+      FF::Entity* p_entity = nullptr;
+      std::string id = "no-id";
+      
       std::cout << "======" << std::endl;
       std::cout << "Entity" << std::endl;
       std::cout << "======" << std::endl;
-      YAML::Node entity = entities_arr[i];
-      YAML::Node entity_ = entity["Entity"];
-      if (YAML::Node identifier = entity_[0]["Identifier"]) {
-        YAML::Node id = identifier["id"];
+      YAML::Node n_entity_arr = entities_arr[i];
+      YAML::Node n_entity = n_entity_arr["Entity"];
+
+      // Identifier component (responsible for allocating the entity)
+      if (YAML::Node identifier = n_entity[0]["Identifier"]) {
+        YAML::Node n_id = identifier["id"];
+        id = n_id.as<std::string>();
         std::cout << "Identifier:" << std::endl;
-        std::cout << "\t" << id.as<std::string>() << std::endl;
+        std::cout << "\t" << id << std::endl;
+
+        p_entity = NewEntity(n_id.as<std::string>());
       }
-      if (YAML::Node transform  = entity_[1]["Transform"]) {
+      else {
+        FF_LOG_ERROR("Entity #{} has no identifier. New entity not allocated.", i);
+        continue;
+      }
+
+      // Transform component
+      if (YAML::Node transform  = n_entity[1]["Transform"]) {
         YAML::Node n_pos  = transform[0]["position"];
         YAML::Node n_scl  = transform[1]["scale"];
         YAML::Node n_rot  = transform[2]["rotation"];
@@ -119,20 +133,49 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
         std::cout << "\tscl   => x: " << scl[0] << ", y: " << scl[1] << ", z: " << scl[2]<< std::endl;
         std::cout << "\trot   => x: " << rot[0] << ", y: " << rot[1] << ", z: " << rot[2]<< std::endl;
         std::cout << "\troc   => x: " << roc[0] << ", y: " << roc[1] << ", z: " << roc[2]<< std::endl;
+
+        p_entity->AddComponent<Transform>();
+        Transform* t = p_entity->GetComponent<Transform>();
+        t->position = pos;
+        t->scale = scl;
+        t->rotation = rot;
+        t->rotation_center = roc;
+        FF_LOG_INFO("Added transform comp");
       }
-      if (YAML::Node shape_ren  = entity_[2]["ShapeRenderer"]) {
+
+      // ShapeRenderer component
+      if (YAML::Node shape_ren  = n_entity[2]["ShapeRenderer"]) {
         YAML::Node n_color = shape_ren[0]["color"];
         YAML::Node n_shape = shape_ren[1]["shape"];
-        glm::vec3 color = glm::vec3(n_color[0].as<float>(), n_color[0].as<float>(), n_color[0].as<float>());
+        glm::vec4 color = glm::vec4(n_color[0].as<float>(), n_color[1].as<float>(), n_color[2].as<float>(), n_color[3].as<float>());
         int shape       = n_shape.as<int>();
 
         std::cout << "ShapeRenderer:" << std::endl;
-        std::cout << "\tcolor   => x: " << color[0] << ", y: " << color[1] << ", z: " << color[2]<< std::endl;
+        std::cout << "\tcolor   => r: " << color[0] << ", g: " << color[1] << ", b: " << color[2] << ", a: " << color[3] << std::endl;
         std::cout << "\tshape   => " << shape << std::endl;
+
+        p_entity->AddComponent<ShapeRenderer>();
+        ShapeRenderer* sr = p_entity->GetComponent<ShapeRenderer>();
+        sr->color = color;
+        sr->shape = ShapeRenderer::Shape(shape); //NOTE: is this how this works? Can you initialize an enum with an integer?
+        FF_LOG_INFO("Added shape renderer comp");
+      }
+
+      if (YAML::Node sprite_ren  = n_entity[2]["SpriteRenderer"]) {
+        YAML::Node n_color_tint = sprite_ren[0]["color_tint"];
+        glm::vec4 color_tint = glm::vec4(n_color_tint[0].as<float>(), n_color_tint[1].as<float>(), n_color_tint[2].as<float>(), n_color_tint[3].as<float>());
+
+        std::cout << "SpriteRenderer:" << std::endl;
+        std::cout << "\tcolor_tint   => r: " << color_tint[0] << ", g: " << color_tint[1] << ", b: " << color_tint[2] << ", a: " << color_tint[3] << std::endl;
+
+        p_entity->AddComponent<SpriteRenderer>();
+        SpriteRenderer* sr = p_entity->GetComponent<SpriteRenderer>();
+        sr->color_tint = color_tint;
+        FF_LOG_INFO("Added sprite renderer comp");
       }
     }
   } catch (YAML::ParserException e) {
-    FF_LOG_ERROR("{}", e.what());    
+    FF_LOG_ERROR("{}", e.what());
   }
   
   Traverse();
