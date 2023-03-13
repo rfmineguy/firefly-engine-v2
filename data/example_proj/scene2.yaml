@@ -1,0 +1,27 @@
+Entities:
+  - Entity:
+    IdentifierComponent:
+      id: entity0
+    TransformComponent:
+      position: [0, 0, 0]
+      scale: [1, 1, 1]
+      rotation: [0, 0, 0]
+      rotation_center: [0, 0, 0]
+    ShapeRendererComponent:
+      color: [0, 0, 0, 0]
+      shape: 0
+    SpriteRendererComponent:
+      color_tint: [0, 0, 0, 0]
+  - Entity:
+    IdentifierComponent:
+      id: entity1
+    TransformComponent:
+      position: [0, 0, 0]
+      scale: [1, 1, 1]
+      rotation: [0, 0, 0]
+      rotation_center: [0, 0, 0]
+    ShapeRendererComponent:
+      color: [0, 0, 0, 0]
+      shape: 1
+    SpriteRendererComponent:
+      color_tint: [0, 0, 0, 0]

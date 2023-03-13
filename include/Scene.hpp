@@ -19,6 +19,10 @@ public:
   
   Entity* FindEntityNode(const std::string&);
   int GetEntityCount() const;
+
+public:
+  void DeserializeFromFile(const std::string&);
+  void SerializeToFile(const std::string&);
   
 private:
   void InsertEntity(Entity*, Entity&);
@@ -27,6 +31,7 @@ private:
   Entity* FindEntityNodeRec(Entity*, const std::string&);
   void TraverseRec(Entity*, int);
   void Clean(Entity*);
+  void SerializeToFileRec(Entity*, YAML::Emitter&);
 
 private:
   Entity *entity_tree_root, *selected_entity;

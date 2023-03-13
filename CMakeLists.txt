@@ -8,6 +8,7 @@ set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 file (COPY res DESTINATION ${CMAKE_BINARY_DIR})
+file (COPY data DESTINATION ${CMAKE_BINARY_DIR})
 
 include(FetchContent)
 

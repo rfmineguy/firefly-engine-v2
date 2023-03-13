@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <spdlog-src/include/spdlog/spdlog.h>
+#include <yaml-cpp-src/include/yaml-cpp/yaml.h>
 #include "../include/Window.hpp"
 #include "../include/Scene.hpp"
 #include "../include/Logger.hpp"
@@ -41,6 +42,23 @@ void scene_test() {
   scene.Traverse();
 }
 
+void scene_serialize_deserialize_test() {  // FF::Scene scene;
+  std::cout << "-==================================-" << std::endl;
+  std::cout << "    Testing serializing to yaml " << std::endl;
+  std::cout << "-==================================-" << std::endl;
+  FF::Scene scene;
+  scene.NewEntity("Entity1");
+  scene.NewEntity("Entity2");
+  scene.Traverse();
+  scene.SerializeToFile("data/test_serialize/scene2.yaml");
+
+  std::cout << "-==================================-" << std::endl;
+  std::cout << "  Testing deserializing scene file " << std::endl;
+  std::cout << "-==================================-" << std::endl;
+  FF::Scene scene2;
+  scene2.DeserializeFromFile("data/test_serialize/scene2.yaml");
+}
+
 void framebuffer_test() {
   std::cout << "-==================================-" << std::endl;
   std::cout << "      Testing the framebuffer" << std::endl;
@@ -71,15 +89,35 @@ void logger_test() {
   FF_LOG_INFO("This is the first log");
 }
 
+void yaml_test() {
+  YAML::Node test = YAML::LoadFile("data/test.yaml");
+  if (test["name"]) {
+    std::cout << "name = " << test["name"].as<std::string>() << std::endl;
+  }
+  
+  std::cout << "age = " << test["age"].as<int>() << std::endl;
+  std::cout << "job = " << test["job"].as<std::string>() << std::endl;
+  
+  try {
+    YAML::Node scene = YAML::LoadFile("data/example_proj/scene.ffscn");
+  } catch (YAML::ParserException e) {
+    std::cerr << e.what() << std::endl;
+  }
+}
+
 // #define SCENE_TEST
+#define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST
 // #define SHADER_TEST
 // #define LOGGER_TEST
+// #define YAML_CPP_TEST
 
 int main() {
 #ifdef SCENE_TEST
   scene_test();
+#elifdef SCENE_SERIALIZE_DESERIALIZE_TEST
+  scene_serialize_deserialize_test();
 #elifdef FRAMEBUFFER_TEST
   framebuffer_test();
 #elifdef GEOMETRY_TEST
@@ -88,6 +126,8 @@ int main() {
   shader_test();
 #elifdef LOGGER_TEST
   logger_test();
+#elifdef YAML_CPP_TEST
+  yaml_test();
 #else
   FF::Window window;
   FF::ImGuiLayer::ImGuiInitialize(window);
