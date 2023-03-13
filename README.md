@@ -17,3 +17,12 @@ This project is a second attempt at making a game engine
 
 ## "Shoutouts"
 - [Yaml Viewer](https://jsonformatter.org/yaml-viewer) was an indispensable tool in figuring out how to parse the yaml format 
+
+## Build Instructions
+```shell
+mkdir build
+cd build
+cmake ..
+make
+```
+*NOTE* The executable file is named `ff_engine`
