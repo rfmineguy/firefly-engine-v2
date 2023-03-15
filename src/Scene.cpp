@@ -97,86 +97,9 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
     }
     
     for (int i = 0; i < entities_arr.size(); i++) {
-      // std::cout << "======" << std::endl;
-      // std::cout << "Entity" << std::endl;
-      // std::cout << "======" << std::endl;
       YAML::Node n_entity_arr = entities_arr[i];
       YAML::Node n_entity = n_entity_arr["Entity"];
       FF::Entity* p_entity = FF::Entity::Deserialize(n_entity, *this, i);
-
-      /*
-      // Identifier component (responsible for allocating the entity)
-      if (YAML::Node identifier = n_entity[0]["Identifier"]) {
-        YAML::Node n_id = identifier["id"];
-        id = n_id.as<std::string>();
-
-        p_entity = NewEntity(n_id.as<std::string>());
-        Identifier* id = p_entity->GetComponent<Identifier>();
-        std::cout << *id << std::endl;
-
-        FF_LOG_INFO("Added identifier comp");
-      }
-      else {
-        FF_LOG_ERROR("Entity #{} has no identifier. New entity not allocated.", i);
-        continue;
-      }
-
-      // Transform component
-      if (YAML::Node transform  = n_entity[1]["Transform"]) {
-        YAML::Node n_pos  = transform[0]["position"];
-        YAML::Node n_scl  = transform[1]["scale"];
-        YAML::Node n_rot  = transform[2]["rotation"];
-        YAML::Node n_roc = transform[3]["rotation_center"];
-        glm::vec3 pos = glm::vec3(n_pos[0].as<float>(), n_pos[0].as<float>(), n_pos[0].as<float>());
-        glm::vec3 scl = glm::vec3(n_scl[0].as<float>(), n_scl[0].as<float>(), n_scl[0].as<float>());
-        glm::vec3 rot = glm::vec3(n_rot[0].as<float>(), n_rot[0].as<float>(), n_rot[0].as<float>());
-        glm::vec3 roc = glm::vec3(n_roc[0].as<float>(), n_roc[0].as<float>(), n_roc[0].as<float>());
-        
-        p_entity->AddComponent<Transform>();
-        Transform* t = p_entity->GetComponent<Transform>();
-        t->position = pos;
-        t->scale = scl;
-        t->rotation = rot;
-        t->rotation_center = roc;
-
-        std::cout << *t << std::endl;
-        
-        FF_LOG_INFO("Added transform comp");
-      }
-
-      // ShapeRenderer component
-      if (YAML::Node shape_ren  = n_entity[2]["ShapeRenderer"]) {
-        YAML::Node n_color = shape_ren[0]["color"];
-        YAML::Node n_shape = shape_ren[1]["shape"];
-        glm::vec4 color = glm::vec4(n_color[0].as<float>(), n_color[1].as<float>(), n_color[2].as<float>(), n_color[3].as<float>());
-        int shape       = n_shape.as<int>();
-
-        std::cout << "ShapeRenderer:" << std::endl;
-        std::cout << "\tcolor   => r: " << color[0] << ", g: " << color[1] << ", b: " << color[2] << ", a: " << color[3] << std::endl;
-        std::cout << "\tshape   => " << shape << std::endl;
-
-        p_entity->AddComponent<ShapeRenderer>();
-        ShapeRenderer* sr = p_entity->GetComponent<ShapeRenderer>();
-        sr->color = color;
-        sr->shape = ShapeRenderer::Shape(shape); //NOTE: is this how this works? Can you initialize an enum with an integer?
-
-        std::cout << *sr << std::endl;
-        
-        FF_LOG_INFO("Added shape renderer comp");
-      }
-
-      if (YAML::Node sprite_ren  = n_entity[2]["SpriteRenderer"]) {
-        YAML::Node n_color_tint = sprite_ren[0]["color_tint"];
-        glm::vec4 color_tint = glm::vec4(n_color_tint[0].as<float>(), n_color_tint[1].as<float>(), n_color_tint[2].as<float>(), n_color_tint[3].as<float>());
-
-        p_entity->AddComponent<SpriteRenderer>();
-        SpriteRenderer* sr = p_entity->GetComponent<SpriteRenderer>();
-        sr->color_tint = color_tint;
-
-        std::cout << *sr << std::endl;
-        
-        FF_LOG_INFO("Added sprite renderer comp");
-      }*/
     }
   } catch (YAML::ParserException e) {
     FF_LOG_ERROR("{}", e.what());
