@@ -89,18 +89,26 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
   // https://jsonformatter.org/yaml-viewer
   try {
     YAML::Node scene = YAML::LoadFile(filepath);
-    YAML::Node entities_arr = scene["Entities"];
+    std::cout << "Scene size : " << scene.size() << std::endl;
+    
+    //   END ENTITIES ARRAY PARSING
+    YAML::Node entities_arr = scene["Scene"]["Entities"];
     std::cout << "Number of entities in scene file: " << entities_arr.size() << std::endl;
     std::cout << entities_arr << std::endl;
-    if (entities_arr.IsSequence()) {
-      std::cout << "IsSequence" << std::endl;
-    }
     
     for (int i = 0; i < entities_arr.size(); i++) {
       YAML::Node n_entity_arr = entities_arr[i];
       YAML::Node n_entity = n_entity_arr["Entity"];
       FF::Entity* p_entity = FF::Entity::Deserialize(n_entity, *this, i);
     }
+    //   END ENTITIES ARRAY PARSING
+
+    //   START TREE PARSING
+    YAML::Node n_tree = scene["Scene"]["Tree"];
+    std::cout << "TREEEE" << std::endl;
+    
+    //   END TREE PARSING
+    
   } catch (YAML::ParserException e) {
     FF_LOG_ERROR("{}", e.what());
   }
@@ -113,14 +121,23 @@ void Scene::SerializeToFile(const std::string& filepath) {
   FF_LOG_INFO("Serializing scene");
   YAML::Emitter emitter;
 
-  // =========================================
-  //   Serialize entities using yaml-cpp
-  // =========================================
-  emitter << YAML::BeginMap << YAML::Key << "Entities";
-  emitter << YAML::BeginSeq;
-    SerializeToFileRec(entity_tree_root, emitter);
-  emitter << YAML::EndSeq;
-  emitter << YAML::EndMap;
+  //emitter << YAML::BeginSeq << YAML::Key << "Scene" << YAML::Value;
+    // =========================================
+    //   Serialize entities using yaml-cpp
+    // =========================================
+    emitter << YAML::BeginMap << YAML::Key << "Entities" << YAML::Value;
+      emitter << YAML::BeginSeq;
+        SerializeEntitiesToFileRec(entity_tree_root, emitter);
+      emitter << YAML::EndSeq;
+    emitter << YAML::EndMap;
+
+    // =========================================
+    //   Serialize tree structure using yaml-cpp
+    // =========================================
+    emitter << YAML::BeginMap << YAML::Key << "Tree" << YAML::Value;
+      SerializeTreeToFileRec(entity_tree_root, emitter);
+    emitter << YAML::EndMap;
+  //emitter << YAML::EndSeq;
   
   // =========================================
   //   Write emitter to file
@@ -134,22 +151,34 @@ void Scene::SerializeToFile(const std::string& filepath) {
   of.close();
   
   FF_LOG_INFO("Serialized scene");
-  // std::cout << emitter.c_str() << std::endl;
+  std::cout << emitter.c_str() << std::endl;
 }
 
-void Scene::SerializeToFileRec(Entity* root, YAML::Emitter& emitter) {
+void Scene::SerializeEntitiesToFileRec(Entity* root, YAML::Emitter& emitter) {
   if (root == nullptr) {
     return;
   }
   if (root != entity_tree_root) {
     emitter << Entity::Serialize(root);
-    // emitter << *root;
   }
   for (int i = 0; i < root->children.size(); i++) {
-    SerializeToFileRec(root->children.at(i), emitter);
+    SerializeEntitiesToFileRec(root->children.at(i), emitter);
   }
 }
 
+void Scene::SerializeTreeToFileRec(Entity* root, YAML::Emitter& emitter) {
+  if (root == nullptr) {
+    return;
+  }
+  emitter << YAML::BeginMap << YAML::Key;
+    emitter << root->GetComponent<Identifier>()->id << YAML::Value;
+    emitter << YAML::BeginSeq;
+    for (int i = 0; i < root->children.size(); i++) {
+      SerializeTreeToFileRec(root->children.at(i), emitter);
+    }
+    emitter << YAML::EndSeq;
+  emitter << YAML::EndMap;
+}
 
 // Use depth or breadth first search
 //  Probably depth first search

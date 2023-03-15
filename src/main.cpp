@@ -41,7 +41,11 @@ void scene_serialize_deserialize_test() {
   FF::Scene scene;
   scene.NewEntity("Entity1");
   scene.NewEntity("Entity2");
-  scene.NewEntity("Entity3");
+  FF::Entity* e3 = scene.NewEntity("Entity3");
+  FF::Entity* e4 = e3->AddChild(scene.NewEntity("Entity4"));
+  e4->AddChild(scene.NewEntity("Entity5"));
+  e4->AddChild(scene.NewEntity("Entity6"));
+  e3->AddChild(scene.NewEntity("Entity7"));
   scene.Traverse();
   scene.SerializeToFile("data/test_serialize/scene2.yaml");
 

@@ -31,7 +31,8 @@ private:
   Entity* FindEntityNodeRec(Entity*, const std::string&);
   void TraverseRec(Entity*, int);
   void Clean(Entity*);
-  void SerializeToFileRec(Entity*, YAML::Emitter&);
+  void SerializeEntitiesToFileRec(Entity*, YAML::Emitter&);
+  void SerializeTreeToFileRec(Entity*, YAML::Emitter&);
 
 private:
   Entity *entity_tree_root, *selected_entity;
