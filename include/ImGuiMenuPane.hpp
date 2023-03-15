@@ -11,6 +11,9 @@ public:
   virtual void Show(Window&);
 
 private:
+  void ProcessOpenScene();
+
+private:
   Scene& scene;
   std::unordered_map<std::string, ImGuiPane*>& panes;
 };

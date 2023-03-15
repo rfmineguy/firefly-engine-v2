@@ -1,4 +1,5 @@
 #include "../include/Entity.hpp"
+#include "../include/Scene.hpp"
 #include "../include/Components.hpp"
 #include "../include/Logger.hpp"
 #include <iostream>
@@ -7,6 +8,141 @@
 namespace FF {
 
 int Entity::entity_count = 0;
+
+// Deserialize the entity node and return a handle to the new entity
+Entity* Entity::Deserialize(YAML::Node entity_node, FF::Scene& scene, int index) {
+  Entity* p_entity = nullptr;
+  std::string id = "no-id";
+  if (YAML::Node identifier = entity_node[0]["Identifier"]) {
+    YAML::Node n_id = identifier["id"];
+    id = n_id.as<std::string>();
+
+    p_entity = scene.NewEntity(n_id.as<std::string>());
+    Identifier* id = p_entity->GetComponent<Identifier>();
+    std::cout << *id << std::endl;
+
+    FF_LOG_INFO("Added identifier comp");
+  }
+  else {
+    FF_LOG_ERROR("Entity #{} has no identifier. New entity not allocated.", index);
+    return nullptr;
+  }
+
+  // Transform component
+  if (YAML::Node transform  = entity_node[1]["Transform"]) {
+    YAML::Node n_pos  = transform[0]["position"];
+    YAML::Node n_scl  = transform[1]["scale"];
+    YAML::Node n_rot  = transform[2]["rotation"];
+    YAML::Node n_roc = transform[3]["rotation_center"];
+    glm::vec3 pos = glm::vec3(n_pos[0].as<float>(), n_pos[0].as<float>(), n_pos[0].as<float>());
+    glm::vec3 scl = glm::vec3(n_scl[0].as<float>(), n_scl[0].as<float>(), n_scl[0].as<float>());
+    glm::vec3 rot = glm::vec3(n_rot[0].as<float>(), n_rot[0].as<float>(), n_rot[0].as<float>());
+    glm::vec3 roc = glm::vec3(n_roc[0].as<float>(), n_roc[0].as<float>(), n_roc[0].as<float>());
+  
+    p_entity->AddComponent<Transform>();
+    Transform* t = p_entity->GetComponent<Transform>();
+    t->position = pos;
+    t->scale = scl;
+    t->rotation = rot;
+    t->rotation_center = roc;
+
+    std::cout << *t << std::endl;
+  
+    FF_LOG_INFO("Added transform comp");
+  }
+
+  // ShapeRenderer component
+  if (YAML::Node shape_ren  = entity_node[2]["ShapeRenderer"]) {
+    YAML::Node n_color = shape_ren[0]["color"];
+    YAML::Node n_shape = shape_ren[1]["shape"];
+    glm::vec4 color = glm::vec4(n_color[0].as<float>(), n_color[1].as<float>(), n_color[2].as<float>(), n_color[3].as<float>());
+    int shape       = n_shape.as<int>();
+
+    std::cout << "ShapeRenderer:" << std::endl;
+    std::cout << "\tcolor   => r: " << color[0] << ", g: " << color[1] << ", b: " << color[2] << ", a: " << color[3] << std::endl;
+    std::cout << "\tshape   => " << shape << std::endl;
+
+    p_entity->AddComponent<ShapeRenderer>();
+    ShapeRenderer* sr = p_entity->GetComponent<ShapeRenderer>();
+    sr->color = color;
+    sr->shape = ShapeRenderer::Shape(shape); //NOTE: is this how this works? Can you initialize an enum with an integer?
+
+    std::cout << *sr << std::endl;
+    
+    FF_LOG_INFO("Added shape renderer comp");
+  }
+
+  // SpriteRenderer component
+  if (YAML::Node sprite_ren  = entity_node[3]["SpriteRenderer"]) {
+    YAML::Node n_color_tint = sprite_ren[0]["color_tint"];
+    glm::vec4 color_tint = glm::vec4(n_color_tint[0].as<float>(), n_color_tint[1].as<float>(), n_color_tint[2].as<float>(), n_color_tint[3].as<float>());
+
+    p_entity->AddComponent<SpriteRenderer>();
+    SpriteRenderer* sr = p_entity->GetComponent<SpriteRenderer>();
+    sr->color_tint = color_tint;
+
+    std::cout << *sr << std::endl;
+    
+    FF_LOG_INFO("Added sprite renderer comp");
+  }
+  return p_entity;
+}
+
+YAML::Node Entity::Serialize(Entity* entity) {
+  YAML::Emitter emitter;
+  emitter << *entity;
+  YAML::Node n = YAML::Load(emitter.c_str());
+  return n;
+}
+
+//lize the entity
+YAML::Emitter& operator<<(YAML::Emitter& out, const FF::Entity& e) {
+  out << YAML::BeginMap << YAML::Key << "Entity" << YAML::Value;
+  out << YAML::BeginSeq;
+  if (e.HasComponent<Identifier>()) {
+    out << YAML::BeginMap << YAML::Key << "Identifier" << YAML::Value;
+      out << YAML::BeginMap << YAML::Key << "id" << YAML::Value << e.GetComponent<Identifier>()->id << YAML::EndMap;
+    out << YAML::EndMap;
+  }
+  if (e.HasComponent<Transform>()) {
+    Transform* t = e.GetComponent<Transform>();
+    std::vector<float> pos = {t->position.x, t->position.y, t->position.z};
+    std::vector<float> scale = {t->scale.x, t->scale.y, t->scale.z};
+    std::vector<float> rotation = {t->rotation.x, t->rotation.y, t->rotation.z};
+    std::vector<float> rotation_center = {t->rotation_center.x, t->rotation_center.y, t->rotation_center.z};
+
+    out << YAML::BeginMap << YAML::Key << "Transform" << YAML::Value;
+      out << YAML::BeginSeq;
+      out << YAML::BeginMap << YAML::Key << "position"        << YAML::Value << YAML::Flow << pos             << YAML::EndMap;
+      out << YAML::BeginMap << YAML::Key << "scale"           << YAML::Value << YAML::Flow << scale           << YAML::EndMap;
+      out << YAML::BeginMap << YAML::Key << "rotation"        << YAML::Value << YAML::Flow << rotation        << YAML::EndMap;
+      out << YAML::BeginMap << YAML::Key << "rotation_center" << YAML::Value << YAML::Flow << rotation_center << YAML::EndMap;
+      out << YAML::EndSeq;
+    out << YAML::EndMap;
+  }
+  if (e.HasComponent<ShapeRenderer>()) {
+    ShapeRenderer* sr = e.GetComponent<ShapeRenderer>();
+    std::vector<float> color = {sr->color.r, sr->color.g, sr->color.b, sr->color.a};
+    
+    out << YAML::BeginMap << YAML::Key << "ShapeRenderer" << YAML::Value;
+      out << YAML::BeginSeq;
+      out << YAML::BeginMap << YAML::Key << "color" << YAML::Value << YAML::Flow << color << YAML::EndMap;
+      out << YAML::BeginMap << YAML::Key << "shape" << YAML::Value << sr->shape           << YAML::EndMap;
+      out << YAML::EndSeq;
+    out << YAML::EndMap;
+  }
+  if (e.HasComponent<SpriteRenderer>()) {
+    SpriteRenderer* sr = e.GetComponent<SpriteRenderer>();
+    std::vector<float> color_tint = {sr->color_tint.r, sr->color_tint.g, sr->color_tint.b, sr->color_tint.a};
+    
+    out << YAML::BeginMap << YAML::Key << "ShapeRenderer" << YAML::Value;
+      out << YAML::BeginMap << YAML::Key << "color" << YAML::Value << YAML::Flow << color_tint << YAML::EndMap;
+    out << YAML::EndMap;
+  }
+  out << YAML::EndSeq;
+  out << YAML::EndMap;
+  return out;
+}
 
 Entity::Entity() {}
 
@@ -71,54 +207,5 @@ void Entity::MarkDirtyRec(Entity* e, bool dirty) {
   for (int i = 0; i < e->children.size(); i++) {
     MarkDirtyRec(e->children.at(i), dirty);
   }
-}
-
-// Serialize the entity
-YAML::Emitter& operator<<(YAML::Emitter& out, const FF::Entity& e) {
-  out << YAML::BeginMap << YAML::Key << "Entity" << YAML::Value;
-  out << YAML::BeginSeq;
-  if (e.HasComponent<Identifier>()) {
-    out << YAML::BeginMap << YAML::Key << "Identifier" << YAML::Value;
-      out << YAML::BeginMap << YAML::Key << "id" << YAML::Value << e.GetComponent<Identifier>()->id << YAML::EndMap;
-    out << YAML::EndMap;
-  }
-  if (e.HasComponent<Transform>()) {
-    Transform* t = e.GetComponent<Transform>();
-    std::vector<float> pos = {t->position.x, t->position.y, t->position.z};
-    std::vector<float> scale = {t->scale.x, t->scale.y, t->scale.z};
-    std::vector<float> rotation = {t->rotation.x, t->rotation.y, t->rotation.z};
-    std::vector<float> rotation_center = {t->rotation_center.x, t->rotation_center.y, t->rotation_center.z};
-
-    out << YAML::BeginMap << YAML::Key << "Transform" << YAML::Value;
-      out << YAML::BeginSeq;
-      out << YAML::BeginMap << YAML::Key << "position"        << YAML::Value << YAML::Flow << pos             << YAML::EndMap;
-      out << YAML::BeginMap << YAML::Key << "scale"           << YAML::Value << YAML::Flow << scale           << YAML::EndMap;
-      out << YAML::BeginMap << YAML::Key << "rotation"        << YAML::Value << YAML::Flow << rotation        << YAML::EndMap;
-      out << YAML::BeginMap << YAML::Key << "rotation_center" << YAML::Value << YAML::Flow << rotation_center << YAML::EndMap;
-      out << YAML::EndSeq;
-    out << YAML::EndMap;
-  }
-  if (e.HasComponent<ShapeRenderer>()) {
-    ShapeRenderer* sr = e.GetComponent<ShapeRenderer>();
-    std::vector<float> color = {sr->color.r, sr->color.g, sr->color.b, sr->color.a};
-    
-    out << YAML::BeginMap << YAML::Key << "ShapeRenderer" << YAML::Value;
-      out << YAML::BeginSeq;
-      out << YAML::BeginMap << YAML::Key << "color" << YAML::Value << YAML::Flow << color << YAML::EndMap;
-      out << YAML::BeginMap << YAML::Key << "shape" << YAML::Value << sr->shape           << YAML::EndMap;
-      out << YAML::EndSeq;
-    out << YAML::EndMap;
-  }
-  if (e.HasComponent<SpriteRenderer>()) {
-    SpriteRenderer* sr = e.GetComponent<SpriteRenderer>();
-    std::vector<float> color_tint = {sr->color_tint.r, sr->color_tint.g, sr->color_tint.b, sr->color_tint.a};
-    
-    out << YAML::BeginMap << YAML::Key << "ShapeRenderer" << YAML::Value;
-      out << YAML::BeginMap << YAML::Key << "color" << YAML::Value << YAML::Flow << color_tint << YAML::EndMap;
-    out << YAML::EndMap;
-  }
-  out << YAML::EndSeq;
-  out << YAML::EndMap;
-  return out;
 }
 }

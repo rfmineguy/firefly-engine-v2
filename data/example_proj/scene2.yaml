@@ -25,3 +25,22 @@ Entities:
       shape: 1
     SpriteRendererComponent:
       color_tint: [0, 0, 0, 0]
+  - Entity:
+    IdentifierComponent:
+      id: entity2
+    TransformComponent:
+      position: [0, 0, 0]
+      scale: [1, 1, 1]
+      rotation: [0, 0, 0]
+      rotation_center: [0, 0, 0]
+    ShapeRendererComponent:
+      color: [0, 0, 0, 0]
+      shape: 1
+    SpriteRendererComponent:
+      color_tint: [0, 0, 0, 0]
+
+Tree:
+  - root:
+    - children: ["entity0", "entity1"]
+    - entity1: ["entity2"]
+  

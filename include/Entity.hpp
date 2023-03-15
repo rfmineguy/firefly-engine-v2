@@ -11,7 +11,12 @@ if (is_dirty) \
   return
 
 namespace FF {
+class Scene;    // foward declare scene
 class Entity {
+public:
+  static Entity* Deserialize(YAML::Node, FF::Scene&, int);
+  static YAML::Node Serialize(Entity*);
+  
 public:
   Entity();
   Entity(std::shared_ptr<entt::registry>);
@@ -62,6 +67,7 @@ public:
   }  
 
   friend YAML::Emitter& operator<<(YAML::Emitter&, const FF::Entity&);
+
 public:
   static int entity_count;
 

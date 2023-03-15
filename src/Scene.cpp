@@ -97,15 +97,14 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
     }
     
     for (int i = 0; i < entities_arr.size(); i++) {
-      FF::Entity* p_entity = nullptr;
-      std::string id = "no-id";
-      
-      std::cout << "======" << std::endl;
-      std::cout << "Entity" << std::endl;
-      std::cout << "======" << std::endl;
+      // std::cout << "======" << std::endl;
+      // std::cout << "Entity" << std::endl;
+      // std::cout << "======" << std::endl;
       YAML::Node n_entity_arr = entities_arr[i];
       YAML::Node n_entity = n_entity_arr["Entity"];
+      FF::Entity* p_entity = FF::Entity::Deserialize(n_entity, *this, i);
 
+      /*
       // Identifier component (responsible for allocating the entity)
       if (YAML::Node identifier = n_entity[0]["Identifier"]) {
         YAML::Node n_id = identifier["id"];
@@ -177,7 +176,7 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
         std::cout << *sr << std::endl;
         
         FF_LOG_INFO("Added sprite renderer comp");
-      }
+      }*/
     }
   } catch (YAML::ParserException e) {
     FF_LOG_ERROR("{}", e.what());
@@ -190,32 +189,29 @@ void Scene::DeserializeFromFile(const std::string& filepath) {
 void Scene::SerializeToFile(const std::string& filepath) {
   FF_LOG_INFO("Serializing scene");
   YAML::Emitter emitter;
-  
-  // Use emitter
+
+  // =========================================
+  //   Serialize entities using yaml-cpp
+  // =========================================
   emitter << YAML::BeginMap << YAML::Key << "Entities";
   emitter << YAML::BeginSeq;
     SerializeToFileRec(entity_tree_root, emitter);
   emitter << YAML::EndSeq;
   emitter << YAML::EndMap;
   
-  // Write emitter to file
+  // =========================================
+  //   Write emitter to file
+  // =========================================
   std::ofstream of(filepath);
   if (!of.is_open()) {
     FF_LOG_CRIT("Failed to open {}", filepath);
     return;
   }
-  // std::cout << emitter.c_str() << std::endl;
-  if (emitter.good()) {
-    FF_LOG_INFO("Good format");
-  }
-  else {
-    FF_LOG_INFO("Bad format");
-  }
   of << emitter.c_str();
   of.close();
   
   FF_LOG_INFO("Serialized scene");
-  std::cout << emitter.c_str() << std::endl;
+  // std::cout << emitter.c_str() << std::endl;
 }
 
 void Scene::SerializeToFileRec(Entity* root, YAML::Emitter& emitter) {
@@ -223,7 +219,8 @@ void Scene::SerializeToFileRec(Entity* root, YAML::Emitter& emitter) {
     return;
   }
   if (root != entity_tree_root) {
-    emitter << *root;
+    emitter << Entity::Serialize(root);
+    // emitter << *root;
   }
   for (int i = 0; i < root->children.size(); i++) {
     SerializeToFileRec(root->children.at(i), emitter);
