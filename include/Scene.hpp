@@ -36,11 +36,6 @@ private:
   void DeserializeEntities(nlohmann::json);
   void DeserializeTreeRec(nlohmann::json, Entity*, int = 0);
 
-  
-  void SerializeEntitiesToFileRec(Entity*, YAML::Emitter&);
-  void SerializeTreeToFileRec(Entity*, YAML::Emitter&);
-  void DeserializeTreeFromFile(YAML::Node, FF::Entity*);
-
 private:
   Entity *entity_tree_root, *selected_entity;
   int entity_count;

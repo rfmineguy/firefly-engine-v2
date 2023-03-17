@@ -1,7 +1,6 @@
 #ifndef ENTITY_HP
 #define ENTITY_HP
 #include <entt-src/single_include/entt/entt.hpp>
-#include <yaml-cpp-src/include/yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <memory>
@@ -70,8 +69,6 @@ public:
     return registry_ptr.lock()->try_get<T>(handle);
   }  
 
-  friend YAML::Emitter& operator<<(YAML::Emitter&, const FF::Entity&);
-
 public:
   static int entity_count;
 
@@ -89,21 +86,6 @@ friend class ImGuiHeirarchyPane;
 friend class ImGuiViewportPane;
 friend class ImGuiInspectorPane;
 };
-}
-
-namespace YAML {
-  // Serialization/Deserialization to YAML
-  template <>
-  struct convert<FF::Entity> {
-    static Node encode(const FF::Entity& e) {
-      Node node(NodeType::Sequence);
-      return node;
-    }
-    
-    static bool decode(const Node& node, FF::Entity& e) {
-      return true;
-    }
-  };
 }
 
 #endif

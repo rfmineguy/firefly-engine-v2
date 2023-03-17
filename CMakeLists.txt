@@ -147,18 +147,18 @@ endif()
 # ==============================
 # Get the yaml-cpp library
 # ==============================
-FetchContent_Declare(
-  yaml-cpp
-  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-  GIT_TAG yaml-cpp-0.7.0
-)
-
-FetchContent_GetProperties(yaml-cpp)
-if (NOT yaml-cpp_POPULATED)
-  FetchContent_Populate(yaml-cpp)
-  message(${yaml-cpp_SOURCE_DIR})
-  add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
-endif()
+# FetchContent_Declare(
+#   yaml-cpp
+#   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+#   GIT_TAG yaml-cpp-0.7.0
+# )
+# 
+# FetchContent_GetProperties(yaml-cpp)
+# if (NOT yaml-cpp_POPULATED)
+#   FetchContent_Populate(yaml-cpp)
+#   message(${yaml-cpp_SOURCE_DIR})
+#   add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
+# endif()
 
 # ==============================
 # Get the nlohmann_json library
@@ -195,7 +195,7 @@ add_executable(ff_engine
   src/Logger.cpp
 )
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd yaml-cpp nlohmann_json)
+target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd nlohmann_json)
 target_include_directories(ff_engine PRIVATE 
   ${spdlog_SOURCE_DIR}/include/spdlog 
   ${glfw_SOURCE_DIR}/include/ 

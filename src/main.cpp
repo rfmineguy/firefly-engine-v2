@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <spdlog-src/include/spdlog/spdlog.h>
-#include <yaml-cpp-src/include/yaml-cpp/yaml.h>
 #include "../include/Window.hpp"
 #include "../include/Scene.hpp"
 #include "../include/Logger.hpp"
@@ -45,7 +44,8 @@ void scene_serialize_deserialize_test() {
   FF::Entity* e4 = e3->AddChild(scene.NewEntity("Entity4"));
   e4->AddChild(scene.NewEntity("Entity5"));
   e4->AddChild(scene.NewEntity("Entity6"));
-  e3->AddChild(scene.NewEntity("Entity7"));
+  FF::Entity* e7 = e3->AddChild(scene.NewEntity("Entity7"));
+  e7->AddChild(scene.NewEntity("Entity8"));
   scene.SerializeToFile("data/test_serialize/scene2.yaml");
 
   std::cout << "-==================================-" << std::endl;
@@ -87,7 +87,7 @@ void logger_test() {
 }
 
 // #define SCENE_TEST
-#define SCENE_SERIALIZE_DESERIALIZE_TEST
+// #define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST
 // #define SHADER_TEST
