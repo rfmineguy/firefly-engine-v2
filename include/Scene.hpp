@@ -31,8 +31,15 @@ private:
   Entity* FindEntityNodeRec(Entity*, const std::string&);
   void TraverseRec(Entity*, int);
   void Clean(Entity*);
+  void SerializeEntitiesRec(nlohmann::json&, Entity*);
+  void SerializeTreeRec(nlohmann::json&, Entity*);
+  void DeserializeEntities(nlohmann::json);
+  void DeserializeTreeRec(nlohmann::json, Entity*, int = 0);
+
+  
   void SerializeEntitiesToFileRec(Entity*, YAML::Emitter&);
   void SerializeTreeToFileRec(Entity*, YAML::Emitter&);
+  void DeserializeTreeFromFile(YAML::Node, FF::Entity*);
 
 private:
   Entity *entity_tree_root, *selected_entity;

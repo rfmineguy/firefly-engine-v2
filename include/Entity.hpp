@@ -2,6 +2,7 @@
 #define ENTITY_HP
 #include <entt-src/single_include/entt/entt.hpp>
 #include <yaml-cpp-src/include/yaml-cpp/yaml.h>
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -14,8 +15,11 @@ namespace FF {
 class Scene;    // foward declare scene
 class Entity {
 public:
-  static Entity* Deserialize(YAML::Node, FF::Scene&, int);
-  static YAML::Node Serialize(Entity*);
+  // static Entity* Deserialize(YAML::Node, FF::Scene&, int);
+  // static YAML::Node Serialize(Entity*);
+
+  static Entity* Deserialize(nlohmann::json, FF::Scene&, int);
+  static nlohmann::json Serialize(Entity*);
   
 public:
   Entity();

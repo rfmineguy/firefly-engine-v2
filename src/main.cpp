@@ -46,7 +46,6 @@ void scene_serialize_deserialize_test() {
   e4->AddChild(scene.NewEntity("Entity5"));
   e4->AddChild(scene.NewEntity("Entity6"));
   e3->AddChild(scene.NewEntity("Entity7"));
-  scene.Traverse();
   scene.SerializeToFile("data/test_serialize/scene2.yaml");
 
   std::cout << "-==================================-" << std::endl;
@@ -54,6 +53,7 @@ void scene_serialize_deserialize_test() {
   std::cout << "-==================================-" << std::endl;
   FF::Scene scene2;
   scene2.DeserializeFromFile("data/test_serialize/scene2.yaml");
+  scene2.Traverse();
 }
 
 void framebuffer_test() {

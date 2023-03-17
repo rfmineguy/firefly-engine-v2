@@ -23,6 +23,7 @@ include(FetchContent)
 #   - entt
 #   - nfd-extended
 #   - yaml-cpp      (yaml parser)
+#   - nlohmann-json (json parser, will replace yamlcpp)
 
 # ==============================
 # Get the GLFW windowing library
@@ -159,6 +160,21 @@ if (NOT yaml-cpp_POPULATED)
   add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
 endif()
 
+# ==============================
+# Get the nlohmann_json library
+# ==============================
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2
+)
+
+FetchContent_GetProperties(nlohmann_json)
+if (NOT nlohmann_json_POPULATED)
+  FetchContent_Populate(nlohmann_json)
+  message(${nlohmann_json_SOURCE_DIR})
+  add_subdirectory(${nlohmann_json_SOURCE_DIR})
+endif()
 
 add_executable(ff_engine
   src/main.cpp
@@ -179,7 +195,7 @@ add_executable(ff_engine
   src/Logger.cpp
 )
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd yaml-cpp)
+target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd yaml-cpp nlohmann_json)
 target_include_directories(ff_engine PRIVATE 
   ${spdlog_SOURCE_DIR}/include/spdlog 
   ${glfw_SOURCE_DIR}/include/ 

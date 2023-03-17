@@ -1,6 +1,7 @@
 #include "../include/Scene.hpp"
 #include "../include/Logger.hpp"
 #include <yaml-cpp-src/include/yaml-cpp/yaml.h>
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -82,31 +83,115 @@ int Scene::GetEntityCount() const {
   return entity_count;
 }
 
+void Scene::SerializeToFile(const std::string& filepath) {
+  nlohmann::json scene;
+  SerializeEntitiesRec(scene["Entities"], entity_tree_root);
+  SerializeTreeRec(scene["Tree"], entity_tree_root);
+  std::ofstream f(filepath, std::ios::out);
+  f << scene.dump(4);
+  f.close();
+}
+
+void Scene::SerializeEntitiesRec(nlohmann::json& entities_arr, FF::Entity* root) {
+  if (root == nullptr) {
+    return;
+  }
+  if (root != entity_tree_root) {
+    entities_arr.push_back(FF::Entity::Serialize(root));
+  }
+
+  for (int i = 0; i < root->children.size(); i++) {
+    SerializeEntitiesRec(entities_arr, root->children.at(i));
+  }
+}
+
+void Scene::SerializeTreeRec(nlohmann::json& tree, Entity* root) {
+  if (root == nullptr) {
+    return;
+  }
+  tree["id"] = root->GetComponent<Identifier>()->id;
+  for (int i = 0; i < root->children.size(); i++) {
+    SerializeTreeRec(tree["children"][i], root->children.at(i));
+  }
+}
+
+void Scene::DeserializeFromFile(const std::string& filepath) {
+  std::ifstream f(filepath);
+  if (!f.is_open()) {
+    FF_LOG_ERROR("Failed to open {}", filepath);
+    return;
+  }
+  nlohmann::json scene = nlohmann::json::parse(f);
+  std::cout << "Parsed file" << std::endl;
+  DeserializeEntities(scene["Entities"]);
+  DeserializeTreeRec(scene["Tree"], entity_tree_root);
+
+  f.close();
+}
+
+void Scene::DeserializeEntities(nlohmann::json entities) {
+  if (entity_tree_root) {
+    Clean(entity_tree_root);
+  }
+  
+  for (int i = 0; i < entities.size(); i++) {
+    FF::Entity* e = FF::Entity::Deserialize(entities[i], *this, i);
+  }
+}
+
+void Scene::DeserializeTreeRec(nlohmann::json tree, FF::Entity* parent, int level) {
+  std::string id = tree["id"];
+  std::cout << level << std::endl;
+  std::cout << id << std::endl;
+  if (parent != entity_tree_root) {
+    FF::Entity* e = FindEntityNodeRec(entity_tree_root, id);
+    parent->AddChild(e);
+    parent = e;
+  }
+  if (!tree.contains("children") || tree["children"].size() == 0 || level > 2)
+    return;
+  std::cout << tree["children"].dump(3) << std::endl;
+  for (int i = 0; i < tree["children"].size(); i++) {
+    DeserializeTreeRec(tree["children"][i], FindEntityNodeRec(parent, id), level + 1);
+  }
+}
+
+/*
 void Scene::DeserializeFromFile(const std::string& filepath) {
   // Clean out previous scene
   Clean(entity_tree_root);
   
   // https://jsonformatter.org/yaml-viewer
   try {
+    const int ENTITIES_ARRAY = 0;
+    const int TREE_ARRAY = 1;
+    
     YAML::Node scene = YAML::LoadFile(filepath);
     std::cout << "Scene size : " << scene.size() << std::endl;
     
     //   END ENTITIES ARRAY PARSING
-    YAML::Node entities_arr = scene["Scene"]["Entities"];
+    YAML::Node entities_arr = scene[ENTITIES_ARRAY];
+
     std::cout << "Number of entities in scene file: " << entities_arr.size() << std::endl;
     std::cout << entities_arr << std::endl;
     
     for (int i = 0; i < entities_arr.size(); i++) {
-      YAML::Node n_entity_arr = entities_arr[i];
-      YAML::Node n_entity = n_entity_arr["Entity"];
+      // YAML::Node n_entity_arr = entities_arr[i];
+      YAML::Node n_entity = entities_arr[0];
       FF::Entity* p_entity = FF::Entity::Deserialize(n_entity, *this, i);
     }
     //   END ENTITIES ARRAY PARSING
 
     //   START TREE PARSING
-    YAML::Node n_tree = scene["Scene"]["Tree"];
-    std::cout << "TREEEE" << std::endl;
-    
+    YAML::NodeType type;
+    YAML::Node n_tree = scene[TREE_ARRAY]["Tree"];
+    std::cout << n_tree << std::endl;
+    std::cout << "Tree size" << n_tree.size() << std::endl;
+    std::cout << "Tree type" << n_tree.Type() << std::endl;
+    YAML::Node n_root = n_tree[0]["root"];
+    std::cout << n_root.Type() << std::endl;
+    DeserializeTreeFromFile(n_root, entity_tree_root);
+   
     //   END TREE PARSING
     
   } catch (YAML::ParserException e) {
@@ -121,7 +206,7 @@ void Scene::SerializeToFile(const std::string& filepath) {
   FF_LOG_INFO("Serializing scene");
   YAML::Emitter emitter;
 
-  //emitter << YAML::BeginSeq << YAML::Key << "Scene" << YAML::Value;
+  emitter << YAML::BeginSeq << YAML::Value;
     // =========================================
     //   Serialize entities using yaml-cpp
     // =========================================
@@ -135,9 +220,12 @@ void Scene::SerializeToFile(const std::string& filepath) {
     //   Serialize tree structure using yaml-cpp
     // =========================================
     emitter << YAML::BeginMap << YAML::Key << "Tree" << YAML::Value;
-      SerializeTreeToFileRec(entity_tree_root, emitter);
+      emitter << YAML::BeginSeq;
+        SerializeTreeToFileRec(entity_tree_root, emitter);
+      emitter << YAML::EndSeq;
     emitter << YAML::EndMap;
-  //emitter << YAML::EndSeq;
+
+  emitter << YAML::EndSeq;
   
   // =========================================
   //   Write emitter to file
@@ -179,6 +267,16 @@ void Scene::SerializeTreeToFileRec(Entity* root, YAML::Emitter& emitter) {
     emitter << YAML::EndSeq;
   emitter << YAML::EndMap;
 }
+
+void Scene::DeserializeTreeFromFile(YAML::Node node, FF::Entity* parent) {
+  FF_LOG_INFO("Deserialize node [type = {}, size = {}]", (int)node.Type(), node.size());
+  if (node.size() == 0)
+    return;
+  for (int i = 0; i < node.size(); i++) {
+    DeserializeTreeFromFile(node[i], nullptr);
+  }
+}
+*/
 
 // Use depth or breadth first search
 //  Probably depth first search
