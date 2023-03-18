@@ -13,6 +13,7 @@ public:
   virtual void Show(Window&);
 
   // ImGuiViewportPane is a friend of Scene
+private:
   void RenderScene();
   void RenderEntityNode(Entity*, glm::mat4 = glm::mat4(1.0));
 

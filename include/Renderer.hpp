@@ -13,7 +13,7 @@ public:
   Renderer();
   ~Renderer();
   void ClearColor(int, int, int);
-  
+
   void DrawQuad();
   void DrawQuad(glm::mat4);
   void DrawQuad(glm::mat4, glm::vec4);

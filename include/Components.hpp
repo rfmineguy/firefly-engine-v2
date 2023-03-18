@@ -37,6 +37,16 @@ struct Transform {
   glm::vec3 scale;
   glm::vec3 rotation;
   glm::vec3 rotation_center;
+
+
+  static Transform& Default() {
+    static Transform d;
+    d.position = glm::vec3(0);
+    d.scale = glm::vec3(0);
+    d.rotation = glm::vec3(0);
+    d.rotation_center = glm::vec3(0);
+    return d;
+  }
 };
 
 struct ShapeRenderer {

@@ -11,6 +11,7 @@ Scene::Scene(): entity_count(0) {
   registry = std::make_shared<entt::registry>();
   entity_tree_root = new Entity("root", registry);
   entity_tree_root->AddComponent<Identifier>("root");
+  entity_tree_root->AddComponent<Transform>(Transform::Default());
   FF_LOG_INFO("Created scene tree");
 }
 

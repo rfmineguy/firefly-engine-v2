@@ -14,9 +14,12 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   if (!visible)
     return;
 
+  //NOTE: Do I really want to have to set a target framebuffer?
+  //      Why not just bind it before rendering things?
   std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
   renderer.SetTargetFramebuffer(fb);
   renderer.ClearColor(100, 100, 100);
+  renderer.DrawOrigin();
   RenderScene();
   
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
@@ -34,7 +37,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   }
   
   ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size);
-  ImGui::GetForegroundDrawList()->AddCircle(ImGui::GetMousePos(), 10, 0);
+  ImGui::GetForegroundDrawList()->AddCircle(ImGui::GetMousePos(), 10, IM_COL32(255, 0, 0, 255), 100, 1.0f);
 
   ImGui::End();
   ImGui::PopStyleVar();
