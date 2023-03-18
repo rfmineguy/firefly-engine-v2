@@ -1,4 +1,5 @@
 #include "../include/ImGuiContentBrowser.hpp"
+#include "../include/Logger.hpp"
 #include <filesystem>
 
 namespace FF {
@@ -25,10 +26,10 @@ void ImGuiContentBrowserPane::Show(Window& window) {
     }
     ImGui::Text("%s", project.open_directory.c_str());
     if (ImGui::BeginTable("ContentBrowser", 4)) {
-      for (const auto& entry : std::filesystem::recursive_directory_iterator(project.open_directory)) {
+      for (const auto& entry : std::filesystem::directory_iterator(project.open_directory)) {
         if (entry.is_regular_file()) {
           if (ImGui::ImageButton((void*)(intptr_t) file_icon.Handle(), {64, 64}, {0, 1}, {1, 0})) {
-            
+            FF_LOG_INFO("Open file");
           }
         }
         else {
