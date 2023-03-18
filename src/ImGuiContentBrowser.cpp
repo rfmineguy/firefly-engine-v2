@@ -26,19 +26,25 @@ void ImGuiContentBrowserPane::Show(Window& window) {
     }
     ImGui::Text("%s", project.open_directory.c_str());
     if (ImGui::BeginTable("ContentBrowser", 4)) {
+      int id = 0;
       for (const auto& entry : std::filesystem::directory_iterator(project.open_directory)) {
         if (entry.is_regular_file()) {
+          ImGui::PushID(id);
           if (ImGui::ImageButton((void*)(intptr_t) file_icon.Handle(), {64, 64}, {0, 1}, {1, 0})) {
             FF_LOG_INFO("Open file");
           }
+          ImGui::PopID();
         }
         else {
+          ImGui::PushID(id);
           if (ImGui::ImageButton((void*)(intptr_t) folder_icon.Handle(), {64, 64}, {0, 1}, {1, 0})) {
              project.open_directory /= entry.path();
           }
+          ImGui::PopID();
         }  
         ImGui::Text("%s", entry.path().filename().c_str());
         ImGui::TableNextColumn();
+        id ++;
       }
       ImGui::EndTable();
     }
