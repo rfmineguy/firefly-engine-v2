@@ -2,6 +2,7 @@
 #define IMGUI_LAYER_HPP
 #include "Window.hpp"
 #include "Scene.hpp"
+#include "Project.hpp"
 #include "ImGuiPane.hpp"
 #include <imgui-src/imgui.h>
 #include <unordered_map>
@@ -36,6 +37,7 @@ protected:
 public:
   std::unordered_map<std::string, ImGuiPane*> panes;
   FF::Scene scene;
+  FF::Project project;
 };
 }
 

@@ -189,6 +189,8 @@ add_executable(ff_engine
   src/ImGuiDemoWindowPane.cpp
   src/ImGuiInspectorPane.cpp
   src/ImGuiMenuPane.cpp
+  src/ImGuiContentBrowser.cpp
+  src/Project.cpp
   src/Scene.cpp
   src/Geometry.cpp
   src/Shader.cpp

@@ -5,6 +5,7 @@
 #include "../include/ImGuiDemoWindowPane.hpp"
 #include "../include/ImGuiInspectorPane.hpp"
 #include "../include/ImGuiMenuPane.hpp"
+#include "../include/ImGuiContentBrowser.hpp"
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
 #include <iostream>
@@ -38,7 +39,8 @@ namespace FF {
     Get().panes.emplace("log", new ImGuiLogPane());
     Get().panes.emplace("heirarchy", new ImGuiHeirarchyPane(Get().scene));
     Get().panes.emplace("inspector", new ImGuiInspectorPane(Get().scene));
-    Get().panes.emplace("menu", new ImGuiMenuPane(Get().scene, Get().panes));
+    Get().panes.emplace("content_browser", new ImGuiContentBrowserPane(Get().project));
+    Get().panes.emplace("menu", new ImGuiMenuPane(Get().scene, Get().project, Get().panes));
   }
 
   void ImGuiLayer::BeginFrame() {

@@ -1,22 +1,13 @@
 #include "../include/ImGuiMenuPane.hpp"
 #include "../include/Logger.hpp"
-#include <nfd_extended-src/src/include/nfd.h>
 
 namespace FF {
 
-ImGuiMenuPane::ImGuiMenuPane(Scene& scene, std::unordered_map<std::string, ImGuiPane*>& panes)
-:ImGuiPane("MenuPane"), scene(scene), panes(panes) {
-  if (NFD_Init() != NFD_OKAY) {
-    FF_LOG_ERROR("NFD Error");
-  }
-  else {
-    FF_LOG_INFO("NFD Initialized");
-  }
+ImGuiMenuPane::ImGuiMenuPane(Scene& scene, Project& project, std::unordered_map<std::string, ImGuiPane*>& panes)
+:ImGuiPane("MenuPane"), scene(scene), project(project), panes(panes), nfdGuard() {
 }
 
 ImGuiMenuPane::~ImGuiMenuPane() {
-  NFD_Quit();
-  FF_LOG_WARN("NFD Deinitialized");
 }
 
 void ImGuiMenuPane::Show(Window& window) {
@@ -24,14 +15,16 @@ void ImGuiMenuPane::Show(Window& window) {
     // Generates menu option "File"
     if (ImGui::BeginMenu("File")) {
       // Generates button, "Open"
-      // ProcessOpenScene();
       if (ImGui::Button("New Project")) {
-        nfdchar_t *outpath;
-        nfdfilteritem_t filterItem[1] = { {  } };
-        nfdresult_t result = NFD_OpenDialog(&outpath, filterItem, 1, NULL);
+        NFD::UniquePath outpath;
+        nfdresult_t result = NFD::PickFolder(outpath);
         if (result == NFD_OKAY) {
-          FF_LOG_DEBUG("[NFD] New project at directory: {}", outpath);
-          NFD_FreePath(outpath);
+          FF_LOG_DEBUG("[NFD] Create new project at directory: {}", outpath.get());
+          try {
+            project.Create(outpath.get());
+          } catch (std::string& err) {
+            FF_LOG_ERROR("{}", err);
+          }
         }
         else if (result == NFD_CANCEL) {
           FF_LOG_DEBUG("[NFD] Canceled");
@@ -39,21 +32,23 @@ void ImGuiMenuPane::Show(Window& window) {
         else {
           FF_LOG_ERROR("[NFD] {}", NFD_GetError());
         }
-        
       }
       if (ImGui::Button("Open Project")) {
-        nfdchar_t *outpath;
-        nfdfilteritem_t filterItem[1] = { { "FF Project File", "ffprj" } };
-        nfdresult_t result = NFD_OpenDialog(&outpath, filterItem, 1, NULL);
+        NFD::UniquePath outpath;
+        nfdresult_t result = NFD::PickFolder(outpath);
         if (result == NFD_OKAY) {
-          FF_LOG_DEBUG("[NFD] Open directory: {}", outpath);
-          NFD_FreePath(outpath);
+          FF_LOG_INFO("[NFD] Open directory: {}", outpath.get());
+          try {
+            project.Open(outpath.get());
+          } catch (std::string& err) {
+            FF_LOG_ERROR("{}", err);
+          }
         }
         else if (result == NFD_CANCEL) {
-          FF_LOG_DEBUG("[NFD] Canceled");
+          FF_LOG_INFO("[NFD] Canceled");
         }
         else {
-          FF_LOG_ERROR("[NFD] {}", NFD_GetError());
+          FF_LOG_ERROR("[NFD] {}", NFD::GetError());
         }
       }
 
@@ -79,22 +74,5 @@ void ImGuiMenuPane::Show(Window& window) {
     }
     ImGui::EndMenuBar();
   } 
-}
-void ImGuiMenuPane::ProcessOpenScene() {
-  if (ImGui::Button("Open Scene")) {
-    nfdchar_t *outpath;
-    nfdfilteritem_t filterItem[2] = { { "FF Scene File", "ffscn" } };
-    nfdresult_t result = NFD_OpenDialog(&outpath, filterItem, 2, NULL);
-    if (result == NFD_OKAY) {
-      FF_LOG_DEBUG("[NFD] Open directory: {}", outpath);
-      NFD_FreePath(outpath);
-    }
-    else if (result == NFD_CANCEL) {
-      FF_LOG_DEBUG("[NFD] Canceled");
-    }
-    else {
-      FF_LOG_ERROR("[NFD] {}", NFD_GetError());
-    }
-  }
 }
 }
