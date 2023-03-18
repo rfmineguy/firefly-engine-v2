@@ -23,7 +23,6 @@ void scene_test() {
   FF::Entity* test = e1->AddChild(scene.NewEntity("Test"));
   FF::Entity* test2 = e1->AddChild(scene.NewEntity("Test2"));
   test2->AddChild(scene.NewEntity("Test9"));
-  // FF::Entity* d = test2->RemoveChild(scene.FindEntityNode("Test9"));
   
   scene.Traverse();
   
@@ -54,6 +53,10 @@ void scene_serialize_deserialize_test() {
   FF::Scene scene2;
   scene2.DeserializeFromFile("data/test_serialize/scene2.yaml");
   scene2.Traverse();
+
+  FF::Entity* e72 = scene2.FindEntityNode("Entity7");
+  e72->AddChild(scene2.NewEntity("Entity9"));
+  scene2.SerializeToFile("data/test_serialize/scene3.json");
 }
 
 void framebuffer_test() {
@@ -93,21 +96,33 @@ void logger_test() {
 // #define SHADER_TEST
 // #define LOGGER_TEST
 
-int main() {
-#ifdef SCENE_TEST
-  scene_test();
-#elifdef SCENE_SERIALIZE_DESERIALIZE_TEST
-  scene_serialize_deserialize_test();
-#elifdef FRAMEBUFFER_TEST
-  framebuffer_test();
-#elifdef GEOMETRY_TEST
-  geometry_test();
-#elifdef SHADER_TEST
-  shader_test();
-#elifdef LOGGER_TEST
-  logger_test();
-#else
-  FF::Window window;
+void LaunchLauncher() {
+  FF::Window window("Firefly Launcher", 600, 600);
+  FF::ImGuiLayer::ImGuiInitialize(window);
+
+  while (!window.ShouldClose()) {
+    FF::ImGuiLayer::BeginFrame();
+    FF::ImGuiLayer::BeginDockspace(window);
+
+    ImGui::Begin("Recents");
+    ImGui::Text("Firefly Engine Launcher");
+
+    ImGui::End();
+
+    ImGui::Begin("Main");
+    ImGui::Button("New Project");
+    ImGui::Button("Open Project");
+    ImGui::End();
+    
+    FF::ImGuiLayer::EndDockspace();
+    FF::ImGuiLayer::EndFrame();
+  }
+
+  FF::ImGuiLayer::ImGuiDeinitialize();
+}
+
+void LaunchEngine() {
+  FF::Window window("Firefly Engine", 600, 600);
   FF::ImGuiLayer::ImGuiInitialize(window);
 
   while (!window.ShouldClose()) {
@@ -122,5 +137,23 @@ int main() {
   }
   
   FF::ImGuiLayer::ImGuiDeinitialize(); // Important
+}
+
+int main() {
+#ifdef SCENE_TEST
+  scene_test();
+#elifdef SCENE_SERIALIZE_DESERIALIZE_TEST
+  scene_serialize_deserialize_test();
+#elifdef FRAMEBUFFER_TEST
+  framebuffer_test();
+#elifdef GEOMETRY_TEST
+  geometry_test();
+#elifdef SHADER_TEST
+  shader_test();
+#elifdef LOGGER_TEST
+  logger_test();
+#else
+  // LaunchLauncher();
+  LaunchEngine();
 #endif
 }

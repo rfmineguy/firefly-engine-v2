@@ -11,8 +11,6 @@ Scene::Scene(): entity_count(0) {
   registry = std::make_shared<entt::registry>();
   entity_tree_root = new Entity("root", registry);
   entity_tree_root->AddComponent<Identifier>("root");
-  entity_tree_root->AddComponent<Transform>();
-  entity_tree_root->AddComponent<ShapeRenderer>();
   FF_LOG_INFO("Created scene tree");
 }
 
@@ -109,6 +107,7 @@ void Scene::SerializeTreeRec(nlohmann::json& tree, Entity* root) {
     return;
   }
   tree["id"] = root->GetComponent<Identifier>()->id;
+  tree["children"] = {};
   for (int i = 0; i < root->children.size(); i++) {
     SerializeTreeRec(tree["children"][i], root->children.at(i));
   }

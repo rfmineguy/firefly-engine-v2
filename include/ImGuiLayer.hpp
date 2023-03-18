@@ -33,6 +33,7 @@ public:
   
 protected:
   static void RegisterPanes();
+  static void InitTheming();
 
 public:
   std::unordered_map<std::string, ImGuiPane*> panes;

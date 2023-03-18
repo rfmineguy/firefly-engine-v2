@@ -12,9 +12,7 @@ ImGuiMenuPane::~ImGuiMenuPane() {
 
 void ImGuiMenuPane::Show(Window& window) {
   if (ImGui::BeginMenuBar()) {
-    // Generates menu option "File"
     if (ImGui::BeginMenu("File")) {
-      // Generates button, "Open"
       if (ImGui::Button("New Project")) {
         NFD::UniquePath outpath;
         nfdresult_t result = NFD::PickFolder(outpath);
@@ -50,6 +48,36 @@ void ImGuiMenuPane::Show(Window& window) {
         else {
           FF_LOG_ERROR("[NFD] {}", NFD::GetError());
         }
+      }
+      if (ImGui::Button("Save Scene")) {
+        NFD::UniquePath outpath;
+        nfdresult_t result = NFD::SaveDialog(outpath);
+        if (result == NFD_OKAY) {
+          FF_LOG_INFO("[NFD] Save to directory: {}", outpath.get());
+          scene.SerializeToFile(outpath.get());
+        }
+        else if (result == NFD_CANCEL) {
+          FF_LOG_INFO("[NFD] Canceled");
+        }
+        else {
+          FF_LOG_ERROR("[NFD] {}", NFD::GetError());
+        }
+        
+      }
+      if (ImGui::Button("Open Scene (Unstable)")) {
+        NFD::UniquePath outpath;
+        nfdresult_t result = NFD::OpenDialog(outpath);
+        if (result == NFD_OKAY) {
+          FF_LOG_INFO("[NFD] Open directory: {}", outpath.get());
+          scene.DeserializeFromFile(outpath.get());
+        }
+        else if (result == NFD_CANCEL) {
+          FF_LOG_INFO("[NFD] Canceled");
+        }
+        else {
+          FF_LOG_ERROR("[NFD] {}", NFD::GetError());
+        }
+        
       }
 
       // Generates button, "Exit"

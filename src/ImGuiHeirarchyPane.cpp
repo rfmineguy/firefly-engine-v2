@@ -6,10 +6,6 @@ namespace FF {
 ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene& scene):
   ImGuiPane("Heirarchy"), scene(scene) {
   scene.NewEntity("Entity0");
-  Entity* e = scene.NewEntity("Entity1");
-  e->AddChild(scene.NewEntity("Entity2"));
-  
-  scene.DeleteEntity(e);
   scene.Traverse();
   // scene.NewEntity("Entity3");
   // scene.NewEntity("Entity4");
