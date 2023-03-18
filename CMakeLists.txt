@@ -22,8 +22,8 @@ include(FetchContent)
 #   - imgui    (docking)
 #   - entt
 #   - nfd-extended
-#   - yaml-cpp      (yaml parser)
 #   - nlohmann-json (json parser, will replace yamlcpp)
+#   - stb
 
 # ==============================
 # Get the GLFW windowing library
@@ -143,23 +143,6 @@ if (NOT nfd_extended_POPULATED)
   add_subdirectory(${nfd_extended_SOURCE_DIR} ${nfd_extended_BINARY_DIR})
 endif()
 
-
-# ==============================
-# Get the yaml-cpp library
-# ==============================
-# FetchContent_Declare(
-#   yaml-cpp
-#   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-#   GIT_TAG yaml-cpp-0.7.0
-# )
-# 
-# FetchContent_GetProperties(yaml-cpp)
-# if (NOT yaml-cpp_POPULATED)
-#   FetchContent_Populate(yaml-cpp)
-#   message(${yaml-cpp_SOURCE_DIR})
-#   add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
-# endif()
-
 # ==============================
 # Get the nlohmann_json library
 # ==============================
@@ -174,6 +157,20 @@ if (NOT nlohmann_json_POPULATED)
   FetchContent_Populate(nlohmann_json)
   message(${nlohmann_json_SOURCE_DIR})
   add_subdirectory(${nlohmann_json_SOURCE_DIR})
+endif()
+
+# ==============================
+# Get the stb library
+# ==============================
+FetchContent_Declare(
+  stb
+  GIT_REPOSITORY https://github.com/nothings/stb.git
+)
+
+FetchContent_GetProperties(stb)
+if (NOT stb_POPULATED)
+  FetchContent_Populate(stb)
+  message(${stb_SOURCE_DIR})
 endif()
 
 add_executable(ff_engine
@@ -193,8 +190,10 @@ add_executable(ff_engine
   src/Project.cpp
   src/Scene.cpp
   src/Geometry.cpp
+  src/Texture.cpp
   src/Shader.cpp
   src/Logger.cpp
+  src/stb_impl.cpp
 )
 
 target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd nlohmann_json)
@@ -205,5 +204,4 @@ target_include_directories(ff_engine PRIVATE
   ${imgui_SOURCE_DIR}/
   ${entt_SOURCE_DIR}/single_include/
   ${nfd-extended_SOURCE_DIR}/src/include/
-  ${yaml-cpp_SOURCE_DIR}
 )

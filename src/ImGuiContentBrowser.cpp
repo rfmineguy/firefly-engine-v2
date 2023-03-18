@@ -3,7 +3,9 @@
 
 namespace FF {
 ImGuiContentBrowserPane::ImGuiContentBrowserPane(Project& p)
-:ImGuiPane("ContentBrowser"), project(p) {}  
+:ImGuiPane("ContentBrowser"), project(p), 
+file_icon("res/textures/icons/icon_file.png"),
+folder_icon("res/textures/icons/icon_folder.png") {}  
 
 ImGuiContentBrowserPane::~ImGuiContentBrowserPane() {}
 
@@ -22,18 +24,25 @@ void ImGuiContentBrowserPane::Show(Window& window) {
       }
     }
     ImGui::Text("%s", project.open_directory.c_str());
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(project.open_directory)) {
-      if (entry.is_regular_file()) {
-        ImGui::Text("%s", entry.path().c_str());
-      }
-      else {
-        if (ImGui::Button(entry.path().c_str())) {
-          project.open_directory /= entry.path();
+    if (ImGui::BeginTable("ContentBrowser", 4)) {
+      for (const auto& entry : std::filesystem::recursive_directory_iterator(project.open_directory)) {
+        if (entry.is_regular_file()) {
+          if (ImGui::ImageButton((void*)(intptr_t) file_icon.Handle(), {64, 64}, {0, 1}, {1, 0})) {
+            
+          }
         }
+        else {
+          if (ImGui::ImageButton((void*)(intptr_t) folder_icon.Handle(), {64, 64}, {0, 1}, {1, 0})) {
+             project.open_directory /= entry.path();
+          }
+        }  
+        ImGui::Text("%s", entry.path().filename().c_str());
+        ImGui::TableNextColumn();
       }
+      ImGui::EndTable();
     }
   }
-
+    
   ImGui::End();
 }
 }
