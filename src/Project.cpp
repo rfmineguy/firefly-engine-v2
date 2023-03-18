@@ -32,7 +32,7 @@ void Project::Create(const std::string& dirpath) {
   if (!fs::exists(path/".ffsettings")) {
     std::ofstream of(path/".ffsettings");
     of.close();
-  }  
+  }
   FF_LOG_INFO("Initialized project directory: {}", path.string());
   Open(dirpath);
 }
@@ -50,6 +50,7 @@ void Project::Open(const std::string& filepath) {
   }
   FF_LOG_INFO("Directory is a valid firefly project");
   root_path = path;
+  open_directory = path;
   is_open = true;
 }
 

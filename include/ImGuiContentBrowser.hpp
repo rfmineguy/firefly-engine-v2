@@ -9,6 +9,7 @@ public:
   ImGuiContentBrowserPane(Project&);
   ~ImGuiContentBrowserPane();
   virtual void Show(Window&);
+
 private:
   Project& project;
 };

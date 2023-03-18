@@ -22,6 +22,7 @@ private:
 
 private:
   std::filesystem::path root_path;
+  std::filesystem::path open_directory;
   bool is_open;
 
 friend class ImGuiContentBrowserPane;
