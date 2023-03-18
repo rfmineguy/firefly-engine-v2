@@ -2,7 +2,6 @@
 #define RENDERER_HPP
 #include <memory>
 #include <unordered_map>
-#include "../include/Framebuffer.hpp"
 #include "../include/Components.hpp"
 #include "../include/Geometry.hpp"
 #include "../include/Shader.hpp"
@@ -18,8 +17,6 @@ public:
   void DrawQuad(glm::mat4);
   void DrawQuad(glm::mat4, glm::vec4);
   
-  void SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer>);
-
 private:
   void UpdateProjectionMatrix(int, int, int, int);
 
@@ -30,9 +27,6 @@ private:
   glm::mat4 projection;
   glm::mat4 view;
   
-private:
-  std::weak_ptr<FF::Framebuffer> fb;
-
 friend class ImGuiViewportPane;
 };
 }
