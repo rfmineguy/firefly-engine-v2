@@ -17,6 +17,7 @@ public:
   virtual glm::mat4 GetView() = 0;
   virtual glm::mat4 GetProj() = 0;
   virtual void SetProjSize(float, float);
+  void DeltaPos(float, float);
 
 protected:
   float width, height;

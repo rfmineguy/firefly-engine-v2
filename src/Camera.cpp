@@ -8,4 +8,8 @@ void Camera::SetProjSize(float _width, float _height) {
   width = _width;
   height = _height;
 }
+void Camera::DeltaPos(float dx, float dy) {
+  position.x += dx;
+  position.y += dy;
+}
 }

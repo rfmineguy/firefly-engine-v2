@@ -49,6 +49,9 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
     ImVec2 m_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
     FF_LOG_INFO("Mouse dragging. Mouse delta dx: {} dy: {}", m_delta.x, m_delta.y);
+    camera.DeltaPos(m_delta.x, -m_delta.y);
+    
+    ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
   }
 
   ImGui::End();
