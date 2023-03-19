@@ -52,7 +52,7 @@ void Framebuffer::Resize(int newX, int newY, int newWidth, int newHeight) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   width = newWidth;
   height = newHeight;
-  glViewport(newX, newY, width, height);
+  // glViewport(newX, newY, width, height);
 }
 
 void Framebuffer::Bind() {

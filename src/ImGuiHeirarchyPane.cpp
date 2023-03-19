@@ -5,7 +5,8 @@
 namespace FF {
 ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene& scene):
   ImGuiPane("Heirarchy"), scene(scene) {
-  scene.NewEntity("Entity0");
+  FF::Entity* e = scene.NewEntity("Entity0");
+  e->GetComponent<Transform>()->scale = glm::vec3(10, 10, 10);
 }
 
 ImGuiHeirarchyPane::~ImGuiHeirarchyPane() {}

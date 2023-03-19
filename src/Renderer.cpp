@@ -13,6 +13,28 @@ Renderer::Renderer() {
 Renderer::~Renderer() {
 }
 
+void Renderer::ClearColor(float r, float g, float b, float a, std::shared_ptr<Framebuffer> target) {
+  target->Bind();
+  glClearColor(r, g, b, a);
+  glClear(GL_COLOR_BUFFER_BIT);
+  target->Unbind();
+}
+
+void Renderer::DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, std::shared_ptr<FF::Framebuffer> target) {
+  target->Bind();
+  FF::Shader* p_shader = shaders.at("shape_renderer_shader").get();
+  FF::Geometry::Quad().Bind();
+  p_shader->Bind();
+  p_shader->SetUniformMat4("model", model);
+  p_shader->SetUniformMat4("view", view);
+  p_shader->SetUniformMat4("proj", projection);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  p_shader->Unbind();
+  FF::Geometry::Quad().Unbind();
+  target->Unbind();
+}
+
+/*
 void Renderer::ClearColor(int r, int g, int b) {
   if (fb.expired())
     return;
@@ -68,4 +90,5 @@ void Renderer::SetTargetFramebuffer(std::shared_ptr<FF::Framebuffer> _fb) {
 void Renderer::UpdateProjectionMatrix(int newX, int newY, int newW, int newH) {
   projection = glm::ortho((float)newX, (float)newW, (float)newH, (float)newY, 0.f, 1000.f);
 }
+*/
 }

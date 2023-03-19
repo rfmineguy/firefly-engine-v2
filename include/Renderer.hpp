@@ -2,20 +2,23 @@
 #define RENDERER_HPP
 #include <memory>
 #include <unordered_map>
-#include "../include/Components.hpp"
-#include "../include/Geometry.hpp"
-#include "../include/Shader.hpp"
+#include "Components.hpp"
+#include "Geometry.hpp"
+#include "Shader.hpp"
+#include "Framebuffer.hpp"
 
 namespace FF {
 class Renderer {
 public:
   Renderer();
   ~Renderer();
-  void ClearColor(int, int, int);
+  void ClearColor(float, float, float, float, std::shared_ptr<Framebuffer>);
 
   void DrawQuad();
   void DrawQuad(glm::mat4);
   void DrawQuad(glm::mat4, glm::vec4);
+
+  void DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, std::shared_ptr<FF::Framebuffer>);
   
 private:
   void UpdateProjectionMatrix(int, int, int, int);

@@ -2,6 +2,7 @@
 #define IMGUI_VIEWPORTPANE_HPP
 #include "ImGuiPane.hpp"
 #include "Framebuffer.hpp"
+#include "OrthographicCamera.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
 
@@ -14,14 +15,12 @@ public:
 
   // ImGuiViewportPane is a friend of Scene
 private:
-  void RenderScene();
-  void RenderEntityNode(Entity*, glm::mat4 = glm::mat4(1.0));
+  void RenderScene(std::shared_ptr<Framebuffer>);
+  void RenderEntityNode(Entity*, std::shared_ptr<Framebuffer>, glm::mat4 = glm::mat4(1.0));
 
 private:
-  void DisplayMat4(glm::mat4);
-  
-private:
   FF::Renderer renderer;
+  FF::OrthoCamera camera;
   ImVec2 last_viewport_size;
   FF::Scene& scene;
 };

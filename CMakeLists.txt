@@ -193,6 +193,9 @@ add_executable(ff_engine
   src/Texture.cpp
   src/Shader.cpp
   src/Logger.cpp
+  src/Camera.cpp
+  src/PerspectiveCamera.cpp
+  src/OrthographicCamera.cpp
   src/stb_impl.cpp
 )
 
