@@ -11,6 +11,8 @@ public:
   void Bind();
   void Unbind();
   unsigned int Handle() const;
+  int GetWidth() const;
+  int GetHeight() const;
   
 private:
   int width, height, channels;

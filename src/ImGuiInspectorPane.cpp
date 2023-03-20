@@ -37,9 +37,11 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<ShapeRenderer>()) {
+      static int shape = 0;
       ShapeRenderer* s = scene.selected_entity->GetComponent<ShapeRenderer>();
       ImGui::Text("ShapeRenderer");
       ImGui::ColorEdit4("Color", &s->color.r);
+      ImGui::Combo("Shape", &shape, "Rectangle\0Triangle\0Circle\0\0");
       ImGui::Separator();
     }
     if (scene.selected_entity->HasComponent<SpriteRenderer>()) {

@@ -41,4 +41,12 @@ void Texture::Unbind() {
 unsigned int Texture::Handle() const {
   return tex_handle;
 }
+
+int Texture::GetWidth() const {
+  return width;
+}
+
+int Texture::GetHeight() const {
+  return height;
+}
 }

@@ -5,6 +5,7 @@
 #include "OrthographicCamera.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
+#include "Texture.hpp"
 
 namespace FF {
 class ImGuiViewportPane : public ImGuiPane {
@@ -23,6 +24,9 @@ private:
   FF::OrthoCamera camera;
   ImVec2 last_viewport_size;
   FF::Scene& scene;
+  
+private:
+  FF::Texture move_icon, eyeball_icon;
 };
 }
 

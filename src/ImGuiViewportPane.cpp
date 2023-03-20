@@ -6,7 +6,7 @@
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):
-  ImGuiPane("Viewport"), scene(_scene) {
+  ImGuiPane("Viewport"), scene(_scene), move_icon("res/textures/icons/icon_move.png"), eyeball_icon("res/textures/icons/icon_eyeball.png") {
 }
 
 ImGuiViewportPane::~ImGuiViewportPane() {}
@@ -17,13 +17,20 @@ void ImGuiViewportPane::Show(FF::Window& window) {
 
   camera.Update();
 
-  std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
-
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
   ImGui::Text("Resize viewport to see entities rendered");
   
-  // Handle viewport resizing
+  // ========================================
+  // Render the scene to the framebuffer
+  // ========================================
+  std::shared_ptr<FF::Framebuffer> fb = window.GetFramebuffer();
+  renderer.ClearColor(0.6f, 0.6f, 0.6f, 1.f, fb);
+  RenderScene(fb);
+
+  // ========================================
+  // Handle what happens when the viewport gets resized
+  // ========================================
   ImVec2 viewport_size = ImGui::GetContentRegionAvail();
   ImVec2 viewport_pos = ImGui::GetWindowPos();
   static bool first = true;
@@ -32,26 +39,32 @@ void ImGuiViewportPane::Show(FF::Window& window) {
     glViewport(0, 0, viewport_size.x, viewport_size.y);
     first = false;
   }
-  
   if (last_viewport_size.x != viewport_size.x || last_viewport_size.y != viewport_size.y) {
     fb->Resize(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
     camera.SetProjSize(viewport_size.x, viewport_size.y);
     last_viewport_size = viewport_size;
     glViewport(0, 0, viewport_size.x, viewport_size.y);
   }
-
-  renderer.ClearColor(0.6f, 0.6f, 0.6f, 1.f, fb);
-  RenderScene(fb);
   
+  // ========================================
+  // Render the framebuffer to the viewport content region
+  // ========================================
   ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size);
-  ImGui::GetForegroundDrawList()->AddCircle(ImGui::GetMousePos(), 10, IM_COL32(255, 0, 0, 255), 100, 1.0f);
 
+  // ========================================
+  // Handle right click to pan
+  // ========================================
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
     ImVec2 m_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
     FF_LOG_INFO("Mouse dragging. Mouse delta dx: {} dy: {}", m_delta.x, m_delta.y);
     camera.DeltaPos(m_delta.x, -m_delta.y);
     
     ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
+    ImVec2 mouse_pos = ImGui::GetMousePos();
+    ImVec2 icon_size = { (float) move_icon.GetWidth() / 8, (float) move_icon.GetHeight() / 8 };
+    ImVec2 icon_center = { mouse_pos.x - icon_size.x / 2, mouse_pos.y - icon_size.y / 2 };
+    
+    ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) eyeball_icon.Handle(), icon_center, ImVec2{mouse_pos.x + icon_size.x, mouse_pos.y + icon_size.y});
   }
 
   ImGui::End();
@@ -77,7 +90,6 @@ void ImGuiViewportPane::RenderEntityNode(Entity* node, std::shared_ptr<Framebuff
     transform = glm::translate(transform, t->position);
     transform = glm::scale(transform, t->scale);
     transform = glm::rotate(transform, t->rotation.x, glm::vec3(0, 0, 1));
-    ImGui::GetForegroundDrawList()->AddCircle({t->position[0], t->position[1]}, 10, IM_COL32(255, 0, 0, 255), 100, 1.0f);
     renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), fb);
   }
 

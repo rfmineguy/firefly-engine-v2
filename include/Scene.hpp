@@ -31,6 +31,8 @@ private:
   Entity* FindEntityNodeRec(Entity*, const std::string&);
   void TraverseRec(Entity*, int);
   void Clean(Entity*);
+
+private:
   void SerializeEntitiesRec(nlohmann::json&, Entity*);
   void SerializeTreeRec(nlohmann::json&, Entity*);
   void DeserializeEntities(nlohmann::json);

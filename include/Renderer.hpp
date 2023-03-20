@@ -14,6 +14,8 @@ public:
   ~Renderer();
   void ClearColor(float, float, float, float, std::shared_ptr<Framebuffer>);
 
+  void DrawLine(glm::vec3, glm::vec3, float, std::shared_ptr<Framebuffer>);
+  
   void DrawQuad();
   void DrawQuad(glm::mat4);
   void DrawQuad(glm::mat4, glm::vec4);
@@ -29,7 +31,6 @@ private:
   std::unordered_map<std::string, std::unique_ptr<FF::Shader>> shaders;
   glm::mat4 projection;
   glm::mat4 view;
-  
 friend class ImGuiViewportPane;
 };
 }
