@@ -99,7 +99,7 @@ void logger_test() {
 }
 
 // #define SCENE_TEST
-#define SCENE2_TEST
+// #define SCENE2_TEST
 // #define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST

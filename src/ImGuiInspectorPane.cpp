@@ -1,9 +1,10 @@
 #include "../include/ImGuiInspectorPane.hpp"
+#include "../include/Components.hpp"
 
 namespace FF {
 // NOTE: How am I going to notify this pane that a new entity has been selected
 //       in a clean manor. DONT even think about making a singleton for this.
-ImGuiInspectorPane::ImGuiInspectorPane(FF::Scene& scene):
+ImGuiInspectorPane::ImGuiInspectorPane(FF::Scene2& scene):
   ImGuiPane("InspectorPane"), scene(scene) {}
 
 ImGuiInspectorPane::~ImGuiInspectorPane() {}
@@ -13,15 +14,27 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
     return;
   }
   ImGui::Begin(name.c_str());
-  if (scene.selected_entity && !scene.selected_entity->is_dirty) {
-    if (scene.selected_entity->HasComponent<Identifier>()) {
-      ImGui::Text("%s", scene.selected_entity->GetComponent<Identifier>()->id.c_str());
+
+  entt::entity selected_entity = scene.selection;
+  bool is_selection_valid = scene.registry.valid(selected_entity);
+  bool is_selection_dirty = scene.GetComponent<Relationship>(selected_entity)->is_dirty;
+
+  if (is_selection_valid && !is_selection_dirty) {
+    //
+    // IDENTIFIER
+    //
+    if (scene.HasComponent<Identifier>(selected_entity)) {
+      ImGui::Text("%s", scene.GetComponent<Identifier>(selected_entity)->id.c_str());
       ImGui::Separator();
     }
-    if (scene.selected_entity->HasComponent<Transform>()) {
+
+    //
+    // TRANSFORM
+    //
+    if (scene.HasComponent<Transform>(selected_entity)) {
       static bool toggle_2d = true;
       ImGui::Checkbox("Toggle 2D", &toggle_2d);
-      Transform* t = scene.selected_entity->GetComponent<Transform>();
+      Transform* t = scene.GetComponent<Transform>(selected_entity);
       ImGui::Text("Transform");
       if (toggle_2d) {
         ImGui::DragFloat2("Position", &t->position.x, 0.05);
@@ -36,38 +49,49 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
 
       ImGui::Separator();
     }
-    if (scene.selected_entity->HasComponent<ShapeRenderer>()) {
+
+    //
+    // SHAPE RENDERER
+    //
+    if (scene.HasComponent<ShapeRenderer>(selected_entity)) {
       static int shape = 0;
-      ShapeRenderer* s = scene.selected_entity->GetComponent<ShapeRenderer>();
+      ShapeRenderer* s = scene.GetComponent<ShapeRenderer>(selected_entity);
       ImGui::Text("ShapeRenderer");
       ImGui::ColorEdit4("Color", &s->color.r);
       ImGui::Combo("Shape", &shape, "Rectangle\0Triangle\0Circle\0\0");
       ImGui::Separator();
     }
-    if (scene.selected_entity->HasComponent<SpriteRenderer>()) {
-      SpriteRenderer* spr = scene.selected_entity->GetComponent<SpriteRenderer>();
+
+    //
+    // SPRITE RENDERER
+    //
+    if (scene.HasComponent<SpriteRenderer>(selected_entity)) {
+      SpriteRenderer* spr = scene.GetComponent<SpriteRenderer>(selected_entity);
       ImGui::Text("SpriteRenderer");
       ImGui::Separator();
     }
   }
   
-  if (scene.selected_entity && ImGui::Button("Add Component")) {
+  //
+  // ADD COMPONENT POPUP
+  //
+  if (is_selection_valid && ImGui::Button("Add Component")) {
     ImGui::OpenPopup("AddComponentPopup");
   }
   if (ImGui::BeginPopup("AddComponentPopup")) {
-    if (!scene.selected_entity->HasComponent<Transform>()) {
+    if (!scene.HasComponent<Transform>(selected_entity)) {
       if (ImGui::Button("Transform")) {
-        scene.selected_entity->AddComponent<Transform>();
+        scene.AddComponent<Transform>(selected_entity);
       }
     }
-    if (!scene.selected_entity->HasComponent<ShapeRenderer>()) {
+    if (!scene.HasComponent<ShapeRenderer>(selected_entity)) {
       if (ImGui::Button("ShapeRenderer")) {
-        scene.selected_entity->AddComponent<ShapeRenderer>();
+        scene.AddComponent<ShapeRenderer>(selected_entity);
       }
     }
-    if (!scene.selected_entity->HasComponent<SpriteRenderer>()) {
+    if (!scene.HasComponent<SpriteRenderer>(selected_entity)) {
       if (ImGui::Button("SpriteRenderer")) {
-        scene.selected_entity->AddComponent<SpriteRenderer>();
+        scene.AddComponent<SpriteRenderer>(selected_entity);
       }
     }
 

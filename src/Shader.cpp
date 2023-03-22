@@ -6,11 +6,13 @@
 #include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
 
 namespace FF {
-std::string ReadFile(std::ifstream& f) {
+std::string ReadFile(const std::string& path) {
+  std::ifstream f(path);
   if (!f.is_open())
-    throw std::string("Failed to open file");
+    throw std::string("Failed to open file") + path;
   std::stringstream ss;
   while (f >> ss.rdbuf());
+  f.close();
   return ss.str();
 }
 
@@ -18,23 +20,19 @@ Shader::Shader(const std::string& vert_path, const std::string& frag_path)
 :vertexShaderPath(vert_path), fragmentShaderPath(frag_path),
 vertexShaderHandle(-1), fragmentShaderHandle(-1)
 {
-  std::ifstream f(vert_path);
   try {
-    std::string vert_contents = ReadFile(f);
+    std::string vert_contents = ReadFile(vert_path);
     vertexShaderHandle   = CompileShader(GL_VERTEX_SHADER, vert_contents);
   } catch (std::string& s) {
     std::cerr << s << std::endl;
   }
-  f.close();
   
-  std::ifstream f2(frag_path);
   try {
-    std::string frag_contents = ReadFile(f2);
+    std::string frag_contents = ReadFile(frag_path);
     fragmentShaderHandle = CompileShader(GL_FRAGMENT_SHADER, frag_contents);
   } catch (std::string& s) {
     std::cerr << s << std::endl;
   }
-  f2.close();
   
   if (vertexShaderHandle == -1 || fragmentShaderHandle == -1) {
     FF_LOG_WARN("One of the shaders failed to compile");

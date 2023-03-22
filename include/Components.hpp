@@ -9,6 +9,7 @@
 struct Relationship {
   entt::entity parent;
   std::vector<entt::entity> children;
+  bool is_dirty;
 };
 
 struct Identifier {

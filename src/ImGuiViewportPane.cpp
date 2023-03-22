@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace FF {
-ImGuiViewportPane::ImGuiViewportPane(FF::Scene& _scene):
+ImGuiViewportPane::ImGuiViewportPane(FF::Scene2& _scene):
   ImGuiPane("Viewport"), scene(_scene), move_icon("res/textures/icons/icon_move.png"), eyeball_icon("res/textures/icons/icon_eyeball.png") {
 }
 
@@ -74,28 +74,29 @@ void ImGuiViewportPane::Show(FF::Window& window) {
 
 // ImGuiViewportPane is a friend of Scene
 void ImGuiViewportPane::RenderScene(std::shared_ptr<Framebuffer> fb) {
-  RenderEntityNode(scene.entity_tree_root, fb); //identity transformation
+  RenderEntityNode(scene.scene_root, fb); //identity transformation
 }
 
 // Before cumulative transformation matrices just render the entities
-void ImGuiViewportPane::RenderEntityNode(Entity* node, std::shared_ptr<Framebuffer> fb, glm::mat4 transform) {
-  if (node == nullptr)
+void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Framebuffer> fb, glm::mat4 transform) {
+  if (node == entt::null)
     return;
 
-  if (node->HasComponent<ShapeRenderer>() && node->HasComponent<Transform>()) {
-    ShapeRenderer* rs = node->GetComponent<ShapeRenderer>();
-    Transform* t = node->GetComponent<Transform>();
-    if (!rs || !t) {
+  if (scene.HasComponent<ShapeRenderer>(node) && scene.HasComponent<Transform>(node)) {
+    ShapeRenderer* sr = scene.GetComponent<ShapeRenderer>(node);
+    Transform* trans = scene.GetComponent<Transform>(node);
+    if (!sr || !trans) {
         return;
     }
-    transform = glm::translate(transform, t->position);
-    transform = glm::scale(transform, t->scale);
-    transform = glm::rotate(transform, t->rotation.x, glm::vec3(0, 0, 1));
+    transform = glm::translate(transform, trans->position);
+    transform = glm::scale(transform, trans->scale);
+    transform = glm::rotate(transform, trans->rotation.x, glm::vec3(0, 0, 1));
     renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), fb);
   }
 
-  for (int i = 0; i < node->children.size(); i++) {
-    RenderEntityNode(node->children.at(i), fb, transform);
+  Relationship* r = scene.GetComponent<Relationship>(node);
+  for (int i = 0; i < r->children.size(); i++) {
+    RenderEntityNode(r->children.at(i), fb, transform);
   }
 }
 }

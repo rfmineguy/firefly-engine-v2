@@ -3,7 +3,7 @@
 
 namespace FF {
 
-ImGuiMenuPane::ImGuiMenuPane(Scene& scene, Project& project, std::unordered_map<std::string, ImGuiPane*>& panes)
+ImGuiMenuPane::ImGuiMenuPane(Scene2& scene, Project& project, std::unordered_map<std::string, ImGuiPane*>& panes)
 :ImGuiPane("MenuPane"), scene(scene), project(project), panes(panes), nfdGuard() {
 }
 
@@ -54,7 +54,7 @@ void ImGuiMenuPane::Show(Window& window) {
         nfdresult_t result = NFD::SaveDialog(outpath);
         if (result == NFD_OKAY) {
           FF_LOG_INFO("[NFD] Save to directory: {}", outpath.get());
-          scene.SerializeToFile(outpath.get());
+          // scene.SerializeToFile(outpath.get());
         }
         else if (result == NFD_CANCEL) {
           FF_LOG_INFO("[NFD] Canceled");
@@ -69,7 +69,7 @@ void ImGuiMenuPane::Show(Window& window) {
         nfdresult_t result = NFD::OpenDialog(outpath);
         if (result == NFD_OKAY) {
           FF_LOG_INFO("[NFD] Open directory: {}", outpath.get());
-          scene.DeserializeFromFile(outpath.get());
+          // scene.DeserializeFromFile(outpath.get());
         }
         else if (result == NFD_CANCEL) {
           FF_LOG_INFO("[NFD] Canceled");

@@ -6,8 +6,8 @@
 
 namespace FF {
 Renderer::Renderer() {
-  shaders.emplace("test_shader", std::make_unique<Shader>("res/test.vert", "res/test.frag"));
-  shaders.emplace("shape_renderer_shader", std::make_unique<Shader>("res/shape_renderer.vert", "res/shape_renderer.frag"));
+  shaders.emplace("test_shader", std::make_unique<Shader>("res/shaders/test.vert", "res/shaders/test.frag"));
+  shaders.emplace("shape_renderer_shader", std::make_unique<Shader>("res/shaders/shape_renderer.vert", "res/shaders/shape_renderer.frag"));
 }
 
 Renderer::~Renderer() {

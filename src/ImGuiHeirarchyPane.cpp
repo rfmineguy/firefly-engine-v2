@@ -3,10 +3,11 @@
 #include "../include/Logger.hpp"
 
 namespace FF {
-ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene& scene):
+ImGuiHeirarchyPane::ImGuiHeirarchyPane(FF::Scene2& scene):
   ImGuiPane("Heirarchy"), scene(scene) {
-  FF::Entity* e = scene.NewEntity("Entity0");
-  e->GetComponent<Transform>()->scale = glm::vec3(50, 50, 50);
+  entt::entity e = scene.NewEntity("Entity0");
+  // scene.GetComponent<Transform>(e)->scale = glm::vec3(50, 50, 50);
+  scene.Traverse();
 }
 
 ImGuiHeirarchyPane::~ImGuiHeirarchyPane() {}
@@ -16,26 +17,27 @@ void ImGuiHeirarchyPane::Show(FF::Window& window) {
     return;
   ImGui::Begin(name.c_str());
   if (ImGui::Button("New Entity")) {
-    scene.NewEntity("Entity" + std::to_string(scene.GetEntityCount()));
+    scene.NewEntity("Entity");
   }
   // ValidateTree(scene.selected_entity);
   // FF_LOG_INFO("Validated tree");
-  ShowHeirarchy(scene.entity_tree_root);
+  ShowHeirarchy(scene.scene_root);
   
   
   // NOTE: The entities aren't actually deleted here, so there ARE memory leaks
   ImGui::End();
 }
 
-void ImGuiHeirarchyPane::ShowHeirarchy(FF::Entity* root) {
+void ImGuiHeirarchyPane::ShowHeirarchy(entt::entity root) {
   // traverse tree and render it
-  if (root == nullptr)
+  if (root == entt::null)
     return;
   int result = ShowEntityNode(root);
   // std::cout << root->is_dirty << std::endl;
   if (result != 0) {
-    for (int i = 0; i < root->children.size(); i++) {
-      ShowHeirarchy(root->children.at(i));
+    Relationship* r = scene.GetComponent<Relationship>(root);
+    for (int i = 0; i < r->children.size(); i++) {
+      ShowHeirarchy(r->children.at(i));
     }
     ImGui::TreePop();
   }
@@ -44,20 +46,21 @@ void ImGuiHeirarchyPane::ShowHeirarchy(FF::Entity* root) {
 // 0 = tree node closed
 // 1 = tree node open
 // 2 = tree node deleted
-int ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
+int ImGuiHeirarchyPane::ShowEntityNode(entt::entity node) {
   // std::cout << node << std::endl;
-  if (node->is_dirty)
-    return false;
+  // if (node->is_dirty)
+  //   return false;
   
   // I can be confident that entities will have Identifiers
-  std::string node_id = node->GetComponent<Identifier>()->id;
+  Identifier* p_id = scene.GetComponent<Identifier>(node);
+  std::string node_id = p_id->id;
   ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
   flags |= main_selection_id == node_id ? ImGuiTreeNodeFlags_Selected : 0; 
 
-  bool opened = ImGui::TreeNodeEx(node->GetComponent<Identifier>()->id.c_str(), flags);
+  bool opened = ImGui::TreeNodeEx(node_id.c_str(), flags);
   if (ImGui::IsItemClicked(0) && node_id != "root") {
     main_selection_id = node_id;
-    scene.selected_entity = node;
+    scene.selection = node;
   }
   if (ImGui::IsItemClicked(1) && node_id != "root") {
     ImGui::OpenPopup("RightClickEntityMenu");
@@ -69,40 +72,26 @@ int ImGuiHeirarchyPane::ShowEntityNode(FF::Entity* node) {
         NOTE: While the entity isn't deleted here, it IS guarunteed to be freed when the program ends
         Future plans to implement a free list for entity reuse
       */
-      node->MarkDirty(true);
     }
     ImGui::EndPopup();
   }
   
   if (ImGui::BeginDragDropSource()) {
-    ImGui::SetDragDropPayload("ENTITY_MOVE_PAYLOAD", &node, sizeof(FF::Entity*));
+    ImGui::SetDragDropPayload("ENTITY_MOVE_PAYLOAD", &node, sizeof(entt::entity));
     ImGui::EndDragDropSource();
   }
   if (ImGui::BeginDragDropTarget()) {
     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_MOVE_PAYLOAD")) {
-      FF::Entity* e = *(FF::Entity**) payload->Data;
+      entt::entity e = *(entt::entity*) payload->Data;
+      FF_LOG_INFO("{}", (void*)&e);
+      FF_LOG_INFO("{}", (void*)&node);
       if (e != node) {
-        node->AddChild(e);
+        scene.MoveEntity(e, node);
       }
     }
     ImGui::EndDragDropTarget();
   }
   // do other things
   return opened;
-}
-
-void ImGuiHeirarchyPane::ValidateTree(FF::Entity* root) {
-  if (root == nullptr) {
-    return;
-  }
-  if (root != nullptr && root->is_dirty) {
-    FF_LOG_INFO("Entity '{}' marked dirty, deleting it", (void*)root);
-    scene.DeleteEntity(root);
-    FF_LOG_INFO("Entity fully deleted {}", (void*)root);
-    return;
-  }
-  for (int i = 0; i < root->children.size(); i++) {
-    ValidateTree(root->children.at(i));
-  }
 }
 }

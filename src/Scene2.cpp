@@ -5,10 +5,13 @@
 #include <optional>
 
 namespace FF {
+int Scene2::entity_count = 0;
+
 Scene2::Scene2()
 :scene_root(registry.create()) {
   AddComponent<Relationship>(scene_root);
   AddComponent<Identifier>(scene_root, "root");
+  entity_count++;
   std::cout << "Scene2 constructor" << std::endl;
 }
 
@@ -45,13 +48,14 @@ entt::entity Scene2::NewEntity(const std::string& id, entt::entity parent) {
     }
   }
   
-  static int entity_count = 0;
   entt::entity e = registry.create();
-  AddComponent<Identifier>(e, id);// + std::to_string(entity_count));
+  AddComponent<Identifier>(e, id + std::to_string(Scene2::entity_count));
   AddComponent<Relationship>(e);
   GetComponent<Relationship>(e)->parent = parent;
   GetComponent<Relationship>(parent)->children.push_back(e);
-  entity_count++;
+  AddComponent<Transform>(e);
+  AddComponent<ShapeRenderer>(e);
+  Scene2::entity_count++;
   return e;
 }
 entt::entity Scene2::NewEntity(const std::string& id) {
@@ -70,6 +74,14 @@ entt::entity Scene2::FindEntityById(const std::string& id) {
 }
 
 void Scene2::MoveEntity(entt::entity entity, entt::entity parent) {
+  if (!registry.valid(entity)) {
+    FF_LOG_WARN("MoveEntity: from entity invalid");
+    return;
+  }
+  if (!registry.valid(parent)) {
+    FF_LOG_WARN("MoveEntity: parent entity invalid");
+    return;
+  }
   Relationship* entity_r = GetComponent<Relationship>(entity);
   Relationship* entity_r_parent = GetComponent<Relationship>(entity_r->parent);
   Relationship* parent_r = GetComponent<Relationship>(parent);
@@ -84,27 +96,6 @@ void Scene2::MoveEntity(entt::entity entity, entt::entity parent) {
   entity_r->parent = parent;
 
   // 3. Add 'entity' to its new 'parent'
-  parent_r->children.push_back(entity);;
-}
-
-template <typename T>
-T* Scene2::GetComponent(entt::entity e) {
-  if (e == entt::null) {
-    std::cerr << "GetComponent, entt::null" << std::endl;
-  }
-  if (!HasComponent<T>(e)) {
-    return nullptr;
-  }
-  return &registry.get<T>(e);
-}
-
-template <typename T>
-bool Scene2::HasComponent(entt::entity e) {
-  return registry.try_get<T>(e);
-}
-
-template <typename T, typename ...Args>
-void Scene2::AddComponent(entt::entity e, Args&&... args) {
-  registry.emplace<T>(e, std::forward<Args>(args)...);
+  parent_r->children.push_back(entity);
 }
 }
