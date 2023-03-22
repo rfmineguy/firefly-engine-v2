@@ -44,10 +44,10 @@ void scene2_test() {
   entt::entity e3 = scene2.NewEntity("Entity3");
 
   if (scene2.IsChildOfRec(e3, e0)) {
-    std::cout << "e2 is a child of e0" << std::endl;
+    std::cout << "e3 is a child of e0" << std::endl;
   }
   else {
-    std::cout << "e2 is not a child of e0" << std::endl;
+    std::cout << "e3 is not a child of e0" << std::endl;
   }
   scene2.Traverse();
 }
@@ -110,7 +110,7 @@ void logger_test() {
 }
 
 // #define SCENE_TEST
-#define SCENE2_TEST
+// #define SCENE2_TEST
 // #define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST

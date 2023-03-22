@@ -89,10 +89,14 @@ int ImGuiHeirarchyPane::ShowEntityNode(entt::entity node) {
   */
   if (ImGui::BeginDragDropTarget()) {
     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_MOVE_PAYLOAD")) {
+
+      // node is TO
+      // e    is FROM
+      
       entt::entity e = *(entt::entity*) payload->Data;
       FF_LOG_INFO("{}", (void*)&e);
       FF_LOG_INFO("{}", (void*)&node);
-      if (e != node) {
+      if (!scene.IsChildOfRec(node, e) && e != node) {
         scene.MoveEntity(e, node);
       }
     }
