@@ -20,6 +20,7 @@ include(FetchContent)
 #   - glm
 #   - spdlog
 #   - imgui    (docking)
+#   - imguizmo      (imgui extension for translation gizmos)
 #   - entt
 #   - nfd-extended
 #   - nlohmann-json (json parser, will replace yamlcpp)
@@ -113,6 +114,25 @@ if(NOT imgui_POPULATED)
 endif()
 
 # ==============================
+# Get the imguizmo library
+# ==============================
+FetchContent_Declare(
+  imguizmo
+  GIT_REPOSITORY https://github.com/CedricGuillemet/ImGuizmo.git 
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+)
+
+FetchContent_GetProperties(imguizmo)
+if(NOT imguizmo_POPULATED)
+  FetchContent_Populate(imguizmo)
+  file(COPY cmake/imguizmo/CMakeLists.txt DESTINATION ${imguizmo_SOURCE_DIR})
+  include_directories(${glfw_SOURCE_DIR}/include/)
+  add_subdirectory(${imguizmo_SOURCE_DIR} ${imguizmo_BINARY_DIR})
+endif()
+
+
+# ==============================
 # Get the Entt library
 # ==============================
 FetchContent_Declare(
@@ -201,7 +221,9 @@ add_executable(ff_engine
   src/stb_impl.cpp
 )
 
-target_link_libraries(ff_engine glfw glm glad spdlog imgui EnTT::EnTT nfd nlohmann_json)
+target_precompile_headers(ff_engine PRIVATE include/Components.hpp)
+
+target_link_libraries(ff_engine glfw glm glad spdlog imgui imguizmo EnTT::EnTT nfd nlohmann_json)
 target_include_directories(ff_engine PRIVATE 
   ${spdlog_SOURCE_DIR}/include/spdlog 
   ${glfw_SOURCE_DIR}/include/ 

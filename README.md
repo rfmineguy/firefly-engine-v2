@@ -11,9 +11,10 @@ This project is a second attempt at making a game engine
 - [glm](https://github.com/g-truc/glm.git)
 - [spdlog v1.x](https://github.com/gabime/spdlog.git)
 - [imgui docking](https://github.com/ocornut/imgui.git)
+- [imguizmo](https://github.com/CedricGuillemet/ImGuizmo.git)
 - [EnTT](https://github.com/skypjack/entt.git)
 - [nfd_extended v1.0.1](https://github.com/btzy/nativefiledialog-extended.git)
-- [yaml-cpp 0.7.0](https://github.com/jbeder/yaml-cpp.git)
+- [nlohmann-json v3.11.2](https://github.com/nlohmann/json.git)
 
 ## "Shoutouts"
 - [Yaml Viewer](https://jsonformatter.org/yaml-viewer) was an indispensable tool in figuring out how to parse the yaml format 
