@@ -35,6 +35,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   ImVec2 viewport_pos = ImGui::GetWindowPos();
   static bool first = true;
   if (first) {
+    fb->Resize(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
     camera.SetProjSize(viewport_size.x, viewport_size.y);
     glViewport(0, 0, viewport_size.x, viewport_size.y);
     first = false;

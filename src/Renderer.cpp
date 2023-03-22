@@ -34,6 +34,7 @@ void Renderer::DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, s
   p_shader->SetUniformMat4("model", model);
   p_shader->SetUniformMat4("view", view);
   p_shader->SetUniformMat4("proj", projection);
+  // p_shader->SetUniformVec4("u_color", glm::vec4(1.f));
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   p_shader->Unbind();
   FF::Geometry::Quad().Unbind();

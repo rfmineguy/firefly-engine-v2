@@ -32,6 +32,9 @@ void scene_test() {
   scene.Traverse();
 }
 
+void scene2_test() {
+}
+
 void scene_serialize_deserialize_test() {
   std::cout << "-==================================-" << std::endl;
   std::cout << "    Testing serializing to yaml " << std::endl;
@@ -90,6 +93,7 @@ void logger_test() {
 }
 
 // #define SCENE_TEST
+#define SCENE2_TEST
 // #define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST
@@ -142,6 +146,8 @@ void LaunchEngine() {
 int main() {
 #ifdef SCENE_TEST
   scene_test();
+#elifdef SCENE2_TEST
+  scene2_test();
 #elifdef SCENE_SERIALIZE_DESERIALIZE_TEST
   scene_serialize_deserialize_test();
 #elifdef FRAMEBUFFER_TEST
