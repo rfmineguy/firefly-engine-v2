@@ -2,12 +2,19 @@
 #define COMPONENT_HPP
 #include <string>
 #include <glm-src/glm/glm.hpp>
+#include <entt-src/src/entt/entt.hpp>
 #include <iostream>
+#include <vector>
+
+struct Relationship {
+  entt::entity parent;
+  std::vector<entt::entity> children;
+};
 
 struct Identifier {
-  Identifier(const std::string& id): id(id) {}
-  Identifier(const char* id): id(std::string(id)) {}
   std::string id;
+  Identifier(const std::string& id): id(id) {}
+  // Identifier(const char* id): id(std::string(id)) {}
 
   friend std::ostream& operator<<(std::ostream& os, const Identifier& identifier) {
     os << "Identifier { " << std::endl;

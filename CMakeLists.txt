@@ -118,6 +118,7 @@ endif()
 FetchContent_Declare(
   entt
   GIT_REPOSITORY https://github.com/skypjack/entt.git
+  GIT_TAG v3.11.1
 )
 
 FetchContent_GetProperties(entt)
@@ -189,6 +190,7 @@ add_executable(ff_engine
   src/ImGuiContentBrowser.cpp
   src/Project.cpp
   src/Scene.cpp
+  src/Scene2.cpp
   src/Geometry.cpp
   src/Texture.cpp
   src/Shader.cpp

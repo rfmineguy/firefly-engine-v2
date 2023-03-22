@@ -3,6 +3,7 @@
 #include <spdlog-src/include/spdlog/spdlog.h>
 #include "../include/Window.hpp"
 #include "../include/Scene.hpp"
+#include "../include/Scene2.hpp"
 #include "../include/Logger.hpp"
 #include "../include/ImGuiLayer.hpp"
 #include "../include/Framebuffer.hpp"
@@ -33,6 +34,11 @@ void scene_test() {
 }
 
 void scene2_test() {
+  std::cout << "-==================================-" << std::endl;
+  std::cout << "          Testing scene2 " << std::endl;
+  std::cout << "-==================================-" << std::endl;
+  FF::Scene2 scene2;
+  scene2.Traverse();
 }
 
 void scene_serialize_deserialize_test() {
