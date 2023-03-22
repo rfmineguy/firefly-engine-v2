@@ -76,6 +76,17 @@ int ImGuiHeirarchyPane::ShowEntityNode(entt::entity node) {
     ImGui::SetDragDropPayload("ENTITY_MOVE_PAYLOAD", &node, sizeof(entt::entity));
     ImGui::EndDragDropSource();
   }
+  /*
+  root
+  \_ Entity0
+     \_ Entity1
+        \_ Entity3
+  \_ Entity2
+  */
+
+  /*
+    TODO: Check if the entity begin dragged TO, is a children of the node being dragged FROM
+  */
   if (ImGui::BeginDragDropTarget()) {
     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_MOVE_PAYLOAD")) {
       entt::entity e = *(entt::entity*) payload->Data;

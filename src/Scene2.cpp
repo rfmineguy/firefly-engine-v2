@@ -24,6 +24,21 @@ void Scene2::Traverse() {
   TraverseRec(scene_root);
 }
 
+// Is `this_entity` a child of `that_entity`
+bool Scene2::IsChildOfRec(entt::entity this_entity, entt::entity that_entity) {
+  Relationship* r = GetComponent<Relationship>(that_entity);
+  if (this_entity == that_entity) {
+    std::cout << "Found this_entity" << std::endl;
+    return true;
+  }
+  for (int i = 0; i < r->children.size(); i++) {
+    if (IsChildOfRec(this_entity, r->children.at(i))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Scene2::TraverseRec(entt::entity root, int depth) {
   Relationship* r = GetComponent<Relationship>(root);      // NOTE: Assumes every entity has this Relationship component
   if (Identifier* id = GetComponent<Identifier>(root)) {

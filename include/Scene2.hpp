@@ -18,6 +18,8 @@ public:
   void MoveEntity(entt::entity, entt::entity);
   void Traverse();
 
+  bool IsChildOfRec(entt::entity, entt::entity);
+
 private:
   void TraverseRec(entt::entity, int = 0);
 
