@@ -20,7 +20,7 @@ public:
   void DrawQuad(glm::mat4);
   void DrawQuad(glm::mat4, glm::vec4);
 
-  void DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, std::shared_ptr<FF::Framebuffer>);
+  void DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec4 color, std::shared_ptr<FF::Framebuffer>);
   
 private:
   void UpdateProjectionMatrix(int, int, int, int);

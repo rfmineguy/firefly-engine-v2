@@ -91,7 +91,7 @@ void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Fram
     transform = glm::translate(transform, trans->position);
     transform = glm::scale(transform, trans->scale);
     transform = glm::rotate(transform, trans->rotation.x, glm::vec3(0, 0, 1));
-    renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), fb);
+    renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), sr->color, fb);
   }
 
   Relationship* r = scene.GetComponent<Relationship>(node);

@@ -26,7 +26,7 @@ void Renderer::DrawLine(glm::vec3 p1, glm::vec3 p2, float thickness, std::shared
   target->Bind();
 }
 
-void Renderer::DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, std::shared_ptr<FF::Framebuffer> target) {
+void Renderer::DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec4 color, std::shared_ptr<FF::Framebuffer> target) {
   target->Bind();
   FF::Shader* p_shader = shaders.at("shape_renderer_shader").get();
   FF::Geometry::Quad().Bind();
@@ -34,7 +34,7 @@ void Renderer::DrawQuad(glm::mat4 model, glm::mat4 view, glm::mat4 projection, s
   p_shader->SetUniformMat4("model", model);
   p_shader->SetUniformMat4("view", view);
   p_shader->SetUniformMat4("proj", projection);
-  // p_shader->SetUniformVec4("u_color", glm::vec4(1.f));
+  p_shader->SetUniformVec4("u_color", color);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   p_shader->Unbind();
   FF::Geometry::Quad().Unbind();

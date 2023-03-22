@@ -19,8 +19,6 @@ void ImGuiHeirarchyPane::Show(FF::Window& window) {
   if (ImGui::Button("New Entity")) {
     scene.NewEntity("Entity");
   }
-  // ValidateTree(scene.selected_entity);
-  // FF_LOG_INFO("Validated tree");
   ShowHeirarchy(scene.scene_root);
   
   
@@ -29,11 +27,9 @@ void ImGuiHeirarchyPane::Show(FF::Window& window) {
 }
 
 void ImGuiHeirarchyPane::ShowHeirarchy(entt::entity root) {
-  // traverse tree and render it
   if (root == entt::null)
     return;
   int result = ShowEntityNode(root);
-  // std::cout << root->is_dirty << std::endl;
   if (result != 0) {
     Relationship* r = scene.GetComponent<Relationship>(root);
     for (int i = 0; i < r->children.size(); i++) {
