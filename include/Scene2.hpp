@@ -1,6 +1,7 @@
 #ifndef SCENE
 #define SCENE
 #include <entt-src/src/entt/entt.hpp>
+#include <nlohmann/json.hpp>
 #include <vector>
 #include "../include/Logger.hpp"
 
@@ -20,6 +21,10 @@ public:
 
   bool IsChildOfRec(entt::entity, entt::entity);
 
+public:
+  nlohmann::json Serialize();
+  void Deserialize(nlohmann::json);
+  
 private:
   void TraverseRec(entt::entity, int = 0);
 

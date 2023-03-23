@@ -3,6 +3,7 @@
 #include <glm-src/glm/gtx/transform.hpp>
 #include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
 #include <memory>
+#include <imguizmo-src/ImGuizmo.h>
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene2& _scene):
@@ -33,6 +34,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   // ========================================
   ImVec2 viewport_size = ImGui::GetContentRegionAvail();
   ImVec2 viewport_pos = ImGui::GetWindowPos();
+  bottom_left = viewport_pos;
   static bool first = true;
   if (first) {
     fb->Resize(viewport_pos.x, viewport_pos.y, viewport_size.x, viewport_size.y);
@@ -51,6 +53,7 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   // Render the framebuffer to the viewport content region
   // ========================================
   ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size);
+  // ImGuizmo::DrawGrid(glm::value_ptr(camera.GetView()), glm::value_ptr(camera.GetProj()), glm::value_ptr(glm::mat4(1.0)), 100.f);
 
   // ========================================
   // Handle right click to pan
@@ -92,11 +95,46 @@ void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Fram
     transform = glm::scale(transform, trans->scale);
     transform = glm::rotate(transform, trans->rotation.x, glm::vec3(0, 0, 1));
     renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), sr->color, fb);
+
+    /*
+    if (scene.selection == node) {
+      ImGuizmo::SetOrthographic(true);
+      ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());
+      ImGuizmo::SetRect(bottom_left.x, last_viewport_size.y - bottom_left.y, last_viewport_size.x, last_viewport_size.y);
+  
+      static ImGuizmo::OPERATION current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE);
+      static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::LOCAL);
+
+      ImGuizmo::Manipulate(glm::value_ptr(glm::inverse(camera.GetView())), glm::value_ptr(camera.GetProj()), current_gizmo_operation, current_gizmo_mode, glm::value_ptr(transform));
+      // if (ImGuizmo::IsOver()) {
+      //   FF_LOG_INFO("Over gizmo");
+      // }
+      // if (ImGuizmo::IsUsing()) {
+      //   Transform* t = scene.GetComponent<Transform>(node);
+      //   t->position = glm::vec3(transform[3]);
+      //   FF_LOG_INFO("Using gizmo");
+      // }
+    }
+    */
   }
 
   Relationship* r = scene.GetComponent<Relationship>(node);
   for (int i = 0; i < r->children.size(); i++) {
     RenderEntityNode(r->children.at(i), fb, transform);
+  }
+}
+
+void ImGuiViewportPane::RenderGizmos(glm::mat4& transform, glm::mat4 view, glm::mat4 projection) {
+  ImGuizmo::SetOrthographic(true);
+  ImGuizmo::SetDrawlist();
+  ImGuizmo::SetRect(bottom_left.x, bottom_left.y, last_viewport_size.x, last_viewport_size.y);
+  
+  static ImGuizmo::OPERATION current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE);
+  static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::LOCAL);
+
+  ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), current_gizmo_operation, current_gizmo_mode, glm::value_ptr(transform));
+  if (ImGuizmo::IsUsing()) {
+    FF_LOG_INFO("Using gizmo");
   }
 }
 }

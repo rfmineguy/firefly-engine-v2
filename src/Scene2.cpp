@@ -113,4 +113,12 @@ void Scene2::MoveEntity(entt::entity entity, entt::entity parent) {
   // 3. Add 'entity' to its new 'parent'
   parent_r->children.push_back(entity);
 }
+
+nlohmann::json Scene2::Serialize() {
+  return nlohmann::json();
+}
+
+void Scene2::Deserialize(nlohmann::json json) {
+  
+}
 }

@@ -8,6 +8,7 @@
 #include "../include/ImGuiContentBrowser.hpp"
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
+#include <imguizmo-src/ImGuizmo.h>
 #include <iostream>
 
 namespace FF {
@@ -45,7 +46,7 @@ namespace FF {
   }
   void ImGuiLayer::InitTheming() {
     // Credit to @OverShifted
-    //   From https://github.com/ocornut/imgui/issues/707 
+    //   From https://github.com/ocornut/imgui/issues/707
     ImGuiStyle& style = ImGui::GetStyle();
     style.Colors[ImGuiCol_Text]                  = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     style.Colors[ImGuiCol_TextDisabled]          = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -109,6 +110,7 @@ namespace FF {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
   }
 
   void ImGuiLayer::EndFrame() {

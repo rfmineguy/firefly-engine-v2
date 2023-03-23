@@ -49,6 +49,7 @@ int ImGuiHeirarchyPane::ShowEntityNode(entt::entity node) {
   
   // I can be confident that entities will have Identifiers
   Identifier* p_id = scene.GetComponent<Identifier>(node);
+  Relationship* p_rel = scene.GetComponent<Relationship>(node);
   std::string node_id = p_id->id;
   ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
   flags |= main_selection_id == node_id ? ImGuiTreeNodeFlags_Selected : 0; 

@@ -45,8 +45,7 @@ struct Transform {
   glm::vec3 scale;
   glm::vec3 rotation;
   glm::vec3 rotation_center;
-
-
+  
   static Transform& Default() {
     static Transform d;
     d.position = glm::vec3(0);

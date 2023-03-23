@@ -27,7 +27,7 @@ private:
 
 private:
   // store RECTANGLE, TRIANGLE, CIRCLE, POLYGON
-  FF::Geometry* geometry[ShapeRenderer::SHAPE_COUNT];
+  FF::Geometry* geometry[ShapeRenderer::Shape::SHAPE_COUNT];
   std::unordered_map<std::string, std::unique_ptr<FF::Shader>> shaders;
   glm::mat4 projection;
   glm::mat4 view;

@@ -23,6 +23,7 @@ glm::mat4 OrthoCamera::GetView() {
 
 glm::mat4 OrthoCamera::GetProj() {
   mvp.projection = glm::ortho(0.f, width, height, 0.f, -1.f, 1.f);
+  // mvp.projection = glm::ortho(0.f, width, 0.f, height, -1.f, 1.f);
   return mvp.projection;
 }
 }

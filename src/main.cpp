@@ -143,7 +143,7 @@ void LaunchLauncher() {
 }
 
 void LaunchEngine() {
-  FF::Window window("Firefly Engine", 600, 600);
+  FF::Window window("Firefly Engine", 1000, 1000);
   FF::ImGuiLayer::ImGuiInitialize(window);
 
   while (!window.ShouldClose()) {

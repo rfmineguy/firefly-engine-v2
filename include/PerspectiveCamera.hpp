@@ -8,17 +8,15 @@ public:
   PerspectiveCamera();
   ~PerspectiveCamera();
   virtual void Update();
-  virtual void SetProjSize(float, float);
   virtual glm::mat4 GetView();
   virtual glm::mat4 GetProj();
 
   void UpdateCameraVectors();
 
 private:
-  glm::vec3 target, front, direction, worldUp, right, camUp;
+  glm::vec3 front, direction, worldUp, right, camUp;
   float yaw, pitch;
 };
 }
-
 
 #endif

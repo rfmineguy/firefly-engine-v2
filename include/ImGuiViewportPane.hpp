@@ -2,6 +2,7 @@
 #define IMGUI_VIEWPORTPANE_HPP
 #include "ImGuiPane.hpp"
 #include "Framebuffer.hpp"
+// #include "PerspectiveCamera.hpp"
 #include "OrthographicCamera.hpp"
 #include "Renderer.hpp"
 #include "Scene2.hpp"
@@ -18,11 +19,13 @@ public:
 private:
   void RenderScene(std::shared_ptr<Framebuffer>);
   void RenderEntityNode(entt::entity, std::shared_ptr<Framebuffer>, glm::mat4 = glm::mat4(1.0));
+  void RenderGizmos(glm::mat4&, glm::mat4, glm::mat4);
 
 private:
   FF::Renderer renderer;
   FF::OrthoCamera camera;
   ImVec2 last_viewport_size;
+  ImVec2 bottom_left;
   FF::Scene2& scene;
   
 private:
@@ -30,4 +33,4 @@ private:
 };
 }
 
-#endif
+  #endif
