@@ -8,7 +8,7 @@ namespace FF {
 int Scene2::entity_count = 0;
 
 Scene2::Scene2()
-:scene_root(registry.create()) {
+:scene_root(registry.create()), selection(entt::null) {
   AddComponent<Relationship>(scene_root);
   AddComponent<Identifier>(scene_root, "root");
   entity_count++;

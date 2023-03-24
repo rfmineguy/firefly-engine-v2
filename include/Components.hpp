@@ -30,7 +30,7 @@ struct Transform {
   :position(glm::vec3(5, 0, 0)), 
   scale(glm::vec3(10)),
   rotation(glm::vec3(0)),
-  rotation_center(glm::vec3(0)) {}
+  rotation_center(glm::vec3(0.5)) {}
 
   friend std::ostream& operator<<(std::ostream& os, const Transform& t) {
     os << "Transform { " << std::endl;
@@ -45,6 +45,8 @@ struct Transform {
   glm::vec3 scale;
   glm::vec3 rotation;
   glm::vec3 rotation_center;
+
+  glm::mat4 tranform_computed;
   
   static Transform& Default() {
     static Transform d;

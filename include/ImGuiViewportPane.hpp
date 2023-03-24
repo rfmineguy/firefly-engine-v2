@@ -19,7 +19,7 @@ public:
 private:
   void RenderScene(std::shared_ptr<Framebuffer>);
   void RenderEntityNode(entt::entity, std::shared_ptr<Framebuffer>, glm::mat4 = glm::mat4(1.0));
-  void RenderGizmos(glm::mat4&, glm::mat4, glm::mat4);
+  void RenderGizmos(Transform*, glm::mat4&, glm::mat4, glm::mat4);
 
 private:
   FF::Renderer renderer;

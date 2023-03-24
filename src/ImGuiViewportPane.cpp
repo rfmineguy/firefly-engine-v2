@@ -52,7 +52,15 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   // ========================================
   // Render the framebuffer to the viewport content region
   // ========================================
-  ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size);
+  ImGui::Image((void*)(intptr_t)fb->GetColorAttachment(), viewport_size); //, {0,1}, {1, 0});
+
+  // ========================================
+  // Handle ImGuizmo
+  // ========================================
+  if (scene.registry.valid(scene.selection)) {
+    Transform* trans = scene.GetComponent<Transform>(scene.selection);
+    RenderGizmos(trans, trans->tranform_computed, glm::inverse(camera.GetView()), camera.GetProj());
+  }
   // ImGuizmo::DrawGrid(glm::value_ptr(camera.GetView()), glm::value_ptr(camera.GetProj()), glm::value_ptr(glm::mat4(1.0)), 100.f);
 
   // ========================================
@@ -93,29 +101,11 @@ void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Fram
     }
     transform = glm::translate(transform, trans->position);
     transform = glm::scale(transform, trans->scale);
-    transform = glm::rotate(transform, trans->rotation.x, glm::vec3(0, 0, 1));
-    renderer.DrawQuad(transform, camera.GetView(), camera.GetProj(), sr->color, fb);
-
-    /*
-    if (scene.selection == node) {
-      ImGuizmo::SetOrthographic(true);
-      ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());
-      ImGuizmo::SetRect(bottom_left.x, last_viewport_size.y - bottom_left.y, last_viewport_size.x, last_viewport_size.y);
-  
-      static ImGuizmo::OPERATION current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE);
-      static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::LOCAL);
-
-      ImGuizmo::Manipulate(glm::value_ptr(glm::inverse(camera.GetView())), glm::value_ptr(camera.GetProj()), current_gizmo_operation, current_gizmo_mode, glm::value_ptr(transform));
-      // if (ImGuizmo::IsOver()) {
-      //   FF_LOG_INFO("Over gizmo");
-      // }
-      // if (ImGuizmo::IsUsing()) {
-      //   Transform* t = scene.GetComponent<Transform>(node);
-      //   t->position = glm::vec3(transform[3]);
-      //   FF_LOG_INFO("Using gizmo");
-      // }
-    }
-    */
+    transform = glm::translate(transform, trans->rotation_center);
+    transform = glm::rotate(transform, glm::radians(trans->rotation.x), glm::vec3(0, 0, 1));
+    transform = glm::translate(transform, -trans->rotation_center);
+    trans->tranform_computed = transform;
+    renderer.DrawQuad(transform, glm::inverse(camera.GetView()), camera.GetProj(), sr->color, fb);
   }
 
   Relationship* r = scene.GetComponent<Relationship>(node);
@@ -124,17 +114,20 @@ void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Fram
   }
 }
 
-void ImGuiViewportPane::RenderGizmos(glm::mat4& transform, glm::mat4 view, glm::mat4 projection) {
+void ImGuiViewportPane::RenderGizmos(Transform* pTrans, glm::mat4& transform, glm::mat4 view, glm::mat4 projection) {
   ImGuizmo::SetOrthographic(true);
+  ImGuizmo::AllowAxisFlip(false);
+  ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
   ImGuizmo::SetDrawlist();
-  ImGuizmo::SetRect(bottom_left.x, bottom_left.y, last_viewport_size.x, last_viewport_size.y);
+  ImGuizmo::SetRect(bottom_left.x, bottom_left.y + last_viewport_size.y, last_viewport_size.x, -last_viewport_size.y);
   
   static ImGuizmo::OPERATION current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE);
-  static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::LOCAL);
+  static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::WORLD);
 
   ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), current_gizmo_operation, current_gizmo_mode, glm::value_ptr(transform));
   if (ImGuizmo::IsUsing()) {
     FF_LOG_INFO("Using gizmo");
+    pTrans->position = glm::vec3(transform[3]);
   }
 }
 }

@@ -16,6 +16,10 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
   ImGui::Begin(name.c_str());
 
   entt::entity selected_entity = scene.selection;
+  if (selected_entity == entt::null) {
+    ImGui::End();
+    return;
+  }
   bool is_selection_valid = scene.registry.valid(selected_entity);
   bool is_selection_dirty = scene.GetComponent<Relationship>(selected_entity)->is_dirty;
 
@@ -40,11 +44,13 @@ void ImGuiInspectorPane::Show(FF::Window& window) {
         ImGui::DragFloat2("Position", &t->position.x, 0.05);
         ImGui::DragFloat2("Scale", &t->scale.x, 0.05f);
         ImGui::DragFloat2("Rotation", &t->rotation.x, 0.05f);               
+        ImGui::DragFloat2("Rotation Offset", &t->rotation_center.x, 0.05f);               
       }
       else {
         ImGui::DragFloat3("Position", &t->position.x, 0.05);
         ImGui::DragFloat3("Scale", &t->scale.x, 0.05f);
         ImGui::DragFloat3("Rotation", &t->rotation.x, 0.05f);        
+        ImGui::DragFloat3("Rotation Offset", &t->rotation_center.x, 0.05f);               
       }
 
       ImGui::Separator();
