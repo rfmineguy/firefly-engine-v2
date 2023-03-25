@@ -218,6 +218,7 @@ add_executable(ff_engine
   src/Camera.cpp
   src/PerspectiveCamera.cpp
   src/OrthographicCamera.cpp
+  src/Util.cpp
   src/stb_impl.cpp
 )
 
