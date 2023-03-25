@@ -1,5 +1,6 @@
 #include "../include/Scene2.hpp"
 #include "../include/Components.hpp"
+#include "../include/Util.hpp"
 #include <utility>
 #include <iostream>
 #include <optional>
@@ -115,11 +116,17 @@ void Scene2::MoveEntity(entt::entity entity, entt::entity parent) {
 }
 
 nlohmann::json Scene2::Serialize() {
-  return nlohmann::json();
+  nlohmann::json scene = {};
+  registry.each([&](const auto entity) {
+    scene.push_back(SerializeEntity(entity));
+  });
+  return scene;
 }
 
 void Scene2::Deserialize(nlohmann::json json) {
-  
+  for (int i = 0; i < json.size(); i++) {
+    DeserializeEntity(json.at(i));
+  }
 }
 
 nlohmann::json Scene2::SerializeEntity(entt::entity e) {
@@ -131,7 +138,12 @@ nlohmann::json Scene2::SerializeEntity(entt::entity e) {
   nlohmann::json sp_ren = entity["SpriteRenderer"] = {};
   // Relationship
   if (Relationship* rel_c = GetComponent<Relationship>(e)) {
-    // rel[...] = ....;
+    rel["parent"] = GetComponent<Identifier>(rel_c->parent)->id;
+    nlohmann::json children = {};
+    for (auto child : rel_c->children) {
+      rel["children"].push_back(GetComponent<Identifier>(child)->id);
+    }
+    entity["Relationship"] = rel;
   }
 
   // Identifier
@@ -152,11 +164,81 @@ nlohmann::json Scene2::SerializeEntity(entt::entity e) {
   if (ShapeRenderer* sr_c = GetComponent<ShapeRenderer>(e)) {
     sh_ren["color_tint"] = { sr_c->color.r, sr_c->color.g, sr_c->color.b, sr_c->color.a };
     sh_ren["shape"] = sr_c->shape;
+    entity["ShapeRenderer"] = sh_ren;
   }
+
+  if (SpriteRenderer* spr_c = GetComponent<SpriteRenderer>(e)) {
+    sp_ren["color_tint"] = { spr_c->color_tint.r, spr_c->color_tint.g, spr_c->color_tint.b, spr_c->color_tint.a };
+    entity["SpriteRenderer"] = sp_ren;
+  }
+  
   return entity;
 }
 
 entt::entity Scene2::DeserializeEntity(nlohmann::json json) {
-  
+  nlohmann::json rel    = json["Relationship"];
+  nlohmann::json id     = json["Identifier"];
+  nlohmann::json trans  = json["Transform"];
+  nlohmann::json sh_ren = json["ShapeRenderer"];
+  nlohmann::json sp_ren = json["SpriteRenderer"];
+
+  std::cout << "===============" << std::endl;
+  if (!rel.is_null()) {
+    std::string parent = rel["parent"];
+    std::vector<std::string> children_vec;
+    
+    nlohmann::json children = rel["children"];
+    for (int i = 0; i < children.size(); i++) {
+      children_vec.push_back(children.at(i));
+    }
+
+
+    std::cout << "Relationship: " << std::endl;
+    std::cout << "\tparent: " << parent << std::endl;
+    std::cout << "\tchildren: [";
+    for (int i = 0; i < children_vec.size(); i++) {
+      std::cout << children_vec.at(i);
+      if (i != children_vec.size() - 1)
+        std::cout << ", ";
+    }
+    std::cout << "]" << std::endl;
+  }
+
+  if (!id.is_null()) {
+    std::string id_s = id["id"];
+
+    std::cout << "Identifier: " << std::endl;
+    std::cout << "\tid: " << id_s << std::endl;
+  }
+
+  if (!trans.is_null()) {
+    glm::vec3 position        = glm::vec3(trans["position"][0], trans["position"][1], trans["position"][2]);
+    glm::vec3 scale           = glm::vec3(trans["scale"][0], trans["scale"][1], trans["scale"][2]);
+    glm::vec3 rotation        = glm::vec3(trans["rotation"][0], trans["rotation"][1], trans["rotation"][2]);
+    glm::vec3 rotation_center = glm::vec3(trans["rotation_center"][0], trans["rotation_center"][1], trans["rotation_center"][2]);
+
+    std::cout << "Transform: " << std::endl;
+    std::cout << "\t"; FF::Util::DisplayVec3(position);
+    std::cout << "\t"; FF::Util::DisplayVec3(scale);
+    std::cout << "\t"; FF::Util::DisplayVec3(rotation);
+    std::cout << "\t"; FF::Util::DisplayVec3(rotation_center);
+  }
+
+  if (!sh_ren.is_null()) {
+    glm::vec3 color_tint = glm::vec3(sh_ren["color_tint"][0], sh_ren["color_tint"][1], sh_ren["color_tint"][2]);
+    int shape = sh_ren["shape"];
+
+    std::cout << "Shape Renderer: " << std::endl;
+    std::cout << "\t"; FF::Util::DisplayVec3(color_tint);
+    std::cout << "\tshape: " << shape << std::endl;
+  }
+
+  if (!sp_ren.is_null()) {
+    glm::vec3 color_tint = glm::vec3(sp_ren["color_tint"][0], sp_ren["color_tint"][1], sp_ren["color_tint"][2]);
+
+    std::cout << "Sprite Renderer: " << std::endl;
+    std::cout << "\t"; FF::Util::DisplayVec3(color_tint);
+  }
+  std::cout << "===============" << std::endl;
 }
 }

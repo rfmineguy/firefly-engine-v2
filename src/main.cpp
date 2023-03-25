@@ -41,7 +41,7 @@ void scene2_test() {
   entt::entity e0 = scene2.NewEntity("Entity0");
   entt::entity e1 = scene2.NewEntity("Entity1", e0);
   entt::entity e2 = scene2.NewEntity("Entity2", e1);
-  entt::entity e3 = scene2.NewEntity("Entity3");
+  entt::entity e3 = scene2.NewEntity("Entity3", e1);
 
   if (scene2.IsChildOfRec(e3, e0)) {
     std::cout << "e3 is a child of e0" << std::endl;
@@ -50,6 +50,9 @@ void scene2_test() {
     std::cout << "e3 is not a child of e0" << std::endl;
   }
   scene2.Traverse();
+
+  nlohmann::json scene = scene2.Serialize();
+  scene2.Deserialize(scene);
 }
 
 void scene_serialize_deserialize_test() {
@@ -110,7 +113,7 @@ void logger_test() {
 }
 
 // #define SCENE_TEST
-// #define SCENE2_TEST
+#define SCENE2_TEST
 // #define SCENE_SERIALIZE_DESERIALIZE_TEST
 // #define FRAMEBUFFER_TEST
 // #define GEOMETRY_TEST
