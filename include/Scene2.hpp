@@ -24,6 +24,10 @@ public:
 public:
   nlohmann::json Serialize();
   void Deserialize(nlohmann::json);
+
+private:
+  nlohmann::json SerializeEntity(entt::entity);
+  entt::entity DeserializeEntity(nlohmann::json);
   
 private:
   void TraverseRec(entt::entity, int = 0);

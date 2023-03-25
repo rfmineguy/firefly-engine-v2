@@ -2,6 +2,7 @@
 #define COMPONENT_HPP
 #include <string>
 #include <glm-src/glm/glm.hpp>
+#include <glm-src/glm/gtx/transform.hpp>
 #include <entt-src/src/entt/entt.hpp>
 #include <iostream>
 #include <vector>
@@ -46,15 +47,16 @@ struct Transform {
   glm::vec3 rotation;
   glm::vec3 rotation_center;
 
-  glm::mat4 tranform_computed;
-  
-  static Transform& Default() {
-    static Transform d;
-    d.position = glm::vec3(0);
-    d.scale = glm::vec3(0);
-    d.rotation = glm::vec3(0);
-    d.rotation_center = glm::vec3(0);
-    return d;
+  glm::mat4 cumulative_transformation;
+
+  glm::mat4 CalcModelMatrix() {
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, position);
+    model = glm::scale(model, scale);
+    model = glm::translate(model, rotation_center);
+    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(0, 0, 1));
+    model = glm::translate(model, -rotation_center);
+    return model;
   }
 };
 

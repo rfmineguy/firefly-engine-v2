@@ -121,4 +121,42 @@ nlohmann::json Scene2::Serialize() {
 void Scene2::Deserialize(nlohmann::json json) {
   
 }
+
+nlohmann::json Scene2::SerializeEntity(entt::entity e) {
+  nlohmann::json entity = {};
+  nlohmann::json rel    = entity["Relationship"] = {};
+  nlohmann::json id     = entity["Identifier"] = {};
+  nlohmann::json trans  = entity["Transform"]  = {};
+  nlohmann::json sh_ren = entity["ShapeRenderer"] = {};
+  nlohmann::json sp_ren = entity["SpriteRenderer"] = {};
+  // Relationship
+  if (Relationship* rel_c = GetComponent<Relationship>(e)) {
+    // rel[...] = ....;
+  }
+
+  // Identifier
+  if (Identifier* id_c = GetComponent<Identifier>(e)) {
+    id["id"] = id_c->id;
+    entity["Identifier"] = id;
+  }
+
+  // Transform
+  if (Transform* t = GetComponent<Transform>(e)) {
+    trans["position"]        = { t->position.x       , t->position.y       , t->position.z };
+    trans["scale"]           = { t->scale.x          , t->scale.y          , t->scale.z    };
+    trans["rotation"]        = { t->rotation.x       , t->rotation.y       , t->rotation.z };
+    trans["rotation_center"] = { t->rotation_center.x, t->rotation_center.y, t->rotation_center.z };
+    entity["Transform"] = trans;
+  }
+
+  if (ShapeRenderer* sr_c = GetComponent<ShapeRenderer>(e)) {
+    sh_ren["color_tint"] = { sr_c->color.r, sr_c->color.g, sr_c->color.b, sr_c->color.a };
+    sh_ren["shape"] = sr_c->shape;
+  }
+  return entity;
+}
+
+entt::entity Scene2::DeserializeEntity(nlohmann::json json) {
+  
+}
 }
