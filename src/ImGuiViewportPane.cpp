@@ -1,14 +1,16 @@
 #include "../include/ImGuiViewportPane.hpp"
 #include "../include/Logger.hpp"
 #include <glm-src/glm/gtx/transform.hpp>
+#include <glm-src/glm/gtx/matrix_decompose.hpp>
 #include <glm-src/glm/gtc/type_ptr.hpp>    // glm::value_ptr
 #include <memory>
 #include <imguizmo-src/ImGuizmo.h>
 
 namespace FF {
 ImGuiViewportPane::ImGuiViewportPane(FF::Scene2& _scene):
-  ImGuiPane("Viewport"), scene(_scene), move_icon("res/textures/icons/icon_move.png"), eyeball_icon("res/textures/icons/icon_eyeball.png") {
-}
+  ImGuiPane("Viewport"), scene(_scene), move_icon("res/textures/icons/icon_move.png"), eyeball_icon("res/textures/icons/icon_eyeball.png"),
+  current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE),
+  current_gizmo_mode(ImGuizmo::MODE::WORLD) {}
 
 ImGuiViewportPane::~ImGuiViewportPane() {}
 
@@ -18,6 +20,16 @@ void ImGuiViewportPane::Show(FF::Window& window) {
 
   camera.Update();
 
+  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_S))) {
+    current_gizmo_operation = ImGuizmo::OPERATION::SCALE;
+  }
+  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_T))) {
+    current_gizmo_operation = ImGuizmo::OPERATION::TRANSLATE;
+  }
+  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_R))) {
+    current_gizmo_operation = ImGuizmo::OPERATION::ROTATE;
+  }
+  
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
   ImGui::Begin(name.c_str());
   // ImGui::Text("Resize viewport to see entities rendered");
@@ -59,7 +71,8 @@ void ImGuiViewportPane::Show(FF::Window& window) {
   // ========================================
   if (scene.registry.valid(scene.selection)) {
     Transform* trans = scene.GetComponent<Transform>(scene.selection);
-    RenderGizmos(trans, trans->CalcModelMatrix(), glm::inverse(camera.GetView()), camera.GetProj());
+    Relationship* rel = scene.GetComponent<Relationship>(scene.selection);
+    RenderGizmos(rel, trans, trans->CalcModelMatrix(), glm::inverse(camera.GetView()), camera.GetProj());
   }
 
   // ========================================
@@ -110,29 +123,32 @@ void ImGuiViewportPane::RenderEntityNode(entt::entity node, std::shared_ptr<Fram
   }
 }
 
-void ImGuiViewportPane::RenderGizmos(Transform* pTrans, glm::mat4 transform, glm::mat4 view, glm::mat4 projection) {
+void ImGuiViewportPane::RenderGizmos(Relationship* r, Transform* pTrans, glm::mat4 transform, glm::mat4 view, glm::mat4 projection) {
   ImGuizmo::SetOrthographic(true);
   ImGuizmo::AllowAxisFlip(false);
   ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
   ImGuizmo::SetDrawlist();
   ImGuizmo::SetRect(bottom_left.x, bottom_left.y + last_viewport_size.y, last_viewport_size.x, -last_viewport_size.y);
-  
-  static ImGuizmo::OPERATION current_gizmo_operation(ImGuizmo::OPERATION::TRANSLATE);
-  static ImGuizmo::MODE current_gizmo_mode(ImGuizmo::MODE::LOCAL);
 
-  ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), current_gizmo_operation, current_gizmo_mode, glm::value_ptr(transform));
+  ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), ImGuizmo::OPERATION(current_gizmo_operation), ImGuizmo::MODE(current_gizmo_mode), glm::value_ptr(transform));
   if (ImGuizmo::IsUsing()) {
+    // if (Transform* t = scene.GetComponent<Transform>(r->parent)) {
+    //   transform *= glm::inverse(t->CalcModelMatrix());
+    // }
     FF_LOG_INFO("Using gizmo");
+    float mat_translation[3], mat_rotation[3], mat_scale[3];
+    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), mat_translation, mat_rotation, mat_scale);
     switch (current_gizmo_operation) {
       case ImGuizmo::OPERATION::TRANSLATE: {
-        pTrans->position = glm::vec3(transform[3]);
+        pTrans->position = glm::vec3(mat_translation[0], mat_translation[1], mat_translation[2]);
         break;
       }
       case ImGuizmo::OPERATION::SCALE: {
-        // pTrans->scale = glm::vec3(transform[0]);
+        pTrans->scale = glm::vec3(mat_scale[0], mat_scale[1], mat_scale[2]);
         break;
       }
       case ImGuizmo::OPERATION::ROTATE: {
+        // pTrans->rotation = glm::vec3(mat_rotation[0], mat_rotation[1], mat_rotation[2]);
         break;
       }
       default:

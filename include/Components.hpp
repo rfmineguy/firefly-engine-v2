@@ -7,6 +7,11 @@
 #include <iostream>
 #include <vector>
 
+
+struct Behavior {
+  
+};
+
 struct Relationship {
   entt::entity parent;
   std::vector<entt::entity> children;
